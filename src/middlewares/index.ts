@@ -1,7 +1,7 @@
-import express from 'express';
-import { get, identity, merge } from 'lodash';
+import express from "express";
+import { get, merge } from "lodash";
 
-import { getUserBySessionToken } from '../db/users';
+import { getUserBySessionToken } from "../db/users";
 
 export const isOwner = async (
   req: express.Request,
@@ -10,7 +10,7 @@ export const isOwner = async (
 ) => {
   try {
     const { id } = req.params;
-    const currentUserId = get(req, 'identity._id') as string;
+    const currentUserId = get(req, "identity._id") as unknown as string;
 
     if (!currentUserId) {
       return res.sendStatus(403);
@@ -33,7 +33,7 @@ export const isAuthenticated = async (
   next: express.NextFunction
 ) => {
   try {
-    const sessionToken = get(req, 'cookies.EMMANUELLE-AUTH');
+    const sessionToken = get(req, "cookies.EMMANUELLE-AUTH");
 
     if (!sessionToken) {
       return res.sendStatus(403);

@@ -1,6 +1,7 @@
-import express from 'express';
-import { getUserByEmail, createUser, updateUserById } from '../db/users';
-import { random, authentication } from '../helpers';
+import express from "express";
+import { createUser, getUserByEmail, updateUserById } from "../db/users";
+import { authentication, random } from "../helpers";
+import { User } from "../types/user.type";
 
 export const login = async (req: express.Request, res: express.Response) => {
   try {
@@ -10,12 +11,7 @@ export const login = async (req: express.Request, res: express.Response) => {
       return res.sendStatus(400);
     }
 
-    const user = (await getUserByEmail(email)).isSelected(
-      '+authentication.salt +authentication.password'
-    ) as unknown as {
-      _id: any;
-      authentication: { sessionToken: string; salt: string; password: string };
-    };
+    const user = (await getUserByEmail(email)) as User | null;
 
     if (!user) {
       return res.sendStatus(400);
@@ -33,14 +29,14 @@ export const login = async (req: express.Request, res: express.Response) => {
       user._id.toString()
     );
 
-    // Mise à jour de l'utilisateur avec le nouveau jeton de session
-    await updateUserById(user._id, {
-      'authentication.sessionToken': user.authentication.sessionToken,
+    // Update the user with the new session token
+    await updateUserById(user._id.toString(), {
+      "authentication.sessionToken": user.authentication.sessionToken,
     });
 
-    // Définition du cookie d'authentification
-    res.cookie('EMMANUELLE-AUTH', user.authentication.sessionToken, {
-      domain: 'localhost',
+    // Set the authentication cookie
+    res.cookie("EMMANUELLE-AUTH", user.authentication.sessionToken, {
+      domain: "localhost",
       httpOnly: true,
       secure: false,
     });
@@ -67,14 +63,14 @@ export const register = async (req: express.Request, res: express.Response) => {
     }
 
     const salt = random();
-    const user = await createUser({
+    const user = (await createUser({
       email,
       username,
       authentication: {
         salt,
         password: authentication(salt, password),
       },
-    });
+    })) as User;
 
     return res.status(200).json(user).end();
   } catch (error) {

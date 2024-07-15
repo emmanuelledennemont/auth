@@ -1,30 +1,29 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 // Définir une interface pour le modèle User
-interface IUser extends Document {
-  username: string;
+export interface IUser extends Document {
   email: string;
+  username: string;
   authentication: {
+    salt: string;
     password: string;
-    salt?: string;
     sessionToken?: string;
   };
 }
 
-// Définir le schéma User
-const UserSchema: Schema<IUser> = new mongoose.Schema({
+const UserSchema: Schema = new Schema({
+  email: { type: String, required: true, unique: true },
   username: { type: String, required: true },
-  email: { type: String, required: true },
   authentication: {
-    password: { type: String, required: true, select: false },
-    salt: { type: String, select: false },
-    sessionToken: { type: String, select: false },
+    salt: { type: String, required: true },
+    password: { type: String, required: true },
+    sessionToken: { type: String },
   },
 });
 
 // Créer le modèle User
 export const UserModel: Model<IUser> = mongoose.model<IUser>(
-  'User',
+  "User",
   UserSchema
 );
 
@@ -32,10 +31,10 @@ export const UserModel: Model<IUser> = mongoose.model<IUser>(
 export const getUsers = () => UserModel.find().exec();
 export const getUserByEmail = (email: string) =>
   UserModel.findOne({ email })
-    .select('+authentication.salt +authentication.password')
+    .select("+authentication.salt +authentication.password")
     .exec();
 export const getUserBySessionToken = (sessionToken: string) =>
-  UserModel.findOne({ 'authentication.sessionToken': sessionToken }).exec();
+  UserModel.findOne({ "authentication.sessionToken": sessionToken }).exec();
 export const getUserById = (id: string) => UserModel.findById(id).exec();
 export const createUser = (values: Record<string, any>) =>
   new UserModel(values).save().then((user) => user.toObject());
