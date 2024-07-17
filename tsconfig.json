@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src", // Base URL pour les chemins relatifs
+    "paths": {
+      "@/*": ["*"]
+    },
     "target": "ES6",
     "module": "commonjs",
     "outDir": "./dist",
@@ -9,5 +13,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

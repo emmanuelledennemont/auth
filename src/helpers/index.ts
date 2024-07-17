@@ -1,11 +1,14 @@
-import crypto from 'crypto';
+import crypto from "crypto";
+import dotenv from "dotenv";
 
-const SECRET = 'EMMANUELLE-REST-API';
+dotenv.config();
 
-export const random = () => crypto.randomBytes(128).toString('base64');
+const SECRET = process.env.SECRET_KEY || "";
+
+export const random = () => crypto.randomBytes(128).toString("base64");
 export const authentication = (salt: string, password: string) => {
   return crypto
-    .createHmac('sha256', [salt, password].join('/'))
+    .createHmac("sha256", [salt, password].join("/"))
     .update(SECRET)
-    .digest('hex');
+    .digest("hex");
 };

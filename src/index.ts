@@ -2,13 +2,14 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import mongoose from "mongoose";
 
 import router from "./router/index";
 
-// Seeders
+dotenv.config();
 
 const app = express();
 
@@ -25,11 +26,13 @@ app.use(bodyParser.json());
 const server = http.createServer(app);
 
 server.listen(8080, () => {
-  console.log("Server is running on http://localhost:8080");
+  console.log("🚀 Server is running on http://localhost:8080 🚀");
+
+  // Appeler la fonction de seed au démarrage du serveur
+  // seedUsers();
 });
 
-const MONGO_URL =
-  "mongodb+srv://Emmanuelle:Emmanuelle@cluster0.ajjdzwm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const MONGO_URL = process.env.MONGO_CONNECTION_STRING || "";
 
 mongoose.Promise = Promise;
 
