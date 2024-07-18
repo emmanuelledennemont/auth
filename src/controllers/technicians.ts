@@ -1,6 +1,7 @@
 import {
   getAllTechnicians,
   getTechnician,
+  getTechnicianByCoordinates,
   updateTechnician,
 } from "@/services/technician.service";
 import express from "express";
@@ -64,5 +65,28 @@ export const updateTechnicianController = async (
   } catch (error) {
     console.error("Error updating technician:", error);
     return res.status(500).json({ error: "Failed to update technician." });
+  }
+};
+
+export const getTechnicianByCoordinatesController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { latitude, longitude } = req.params;
+    if (!latitude || !longitude) {
+      console.error("Missing latitude or longitude query parameter.");
+      return res
+        .status(400)
+        .json({ error: "Missing latitude or longitude query parameter." });
+    }
+
+    const technicians = await getTechnicianByCoordinates(latitude, longitude);
+    return res.status(200).json(technicians);
+  } catch (error) {
+    console.error("Error retrieving technicians by coordinates:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to retrieve technicians by coordinates." });
   }
 };

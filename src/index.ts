@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import mongoose from "mongoose";
-
 import router from "./router/index";
 
 dotenv.config();
