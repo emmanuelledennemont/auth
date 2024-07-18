@@ -5,8 +5,9 @@ export interface IAddress {
   state: string;
   zip: string;
   country: string;
+  postalCode: string;
   coordinates: {
-    lat: number;
-    lng: number;
+    type: "Point";
+    coordinates: [number, number];
   };
 }

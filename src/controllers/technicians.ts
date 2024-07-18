@@ -68,12 +68,14 @@ export const updateTechnicianController = async (
   }
 };
 
+// Recherche de technicien selon la latitude et la longitude de l'utilisateur depuis les paramètres de requête
+
 export const getTechnicianByCoordinatesController = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    const { latitude, longitude } = req.params;
+    const { latitude, longitude } = req.query;
     if (!latitude || !longitude) {
       console.error("Missing latitude or longitude query parameter.");
       return res
@@ -81,7 +83,11 @@ export const getTechnicianByCoordinatesController = async (
         .json({ error: "Missing latitude or longitude query parameter." });
     }
 
-    const technicians = await getTechnicianByCoordinates(latitude, longitude);
+    const technicians = await getTechnicianByCoordinates(
+      Number(latitude),
+      Number(longitude)
+    );
+
     return res.status(200).json(technicians);
   } catch (error) {
     console.error("Error retrieving technicians by coordinates:", error);

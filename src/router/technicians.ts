@@ -8,11 +8,8 @@ import express from "express";
 
 export default (router: express.Router) => {
   router.get("/technicians", getAllTechniciansController);
+  // Recherche de technicien selon la latitude et la longitude de l'utilisateur depuis les paramètres de requête
+  router.get("/technicians/coordinates", getTechnicianByCoordinatesController);
   router.get("/technicians/:id", getTechnicianController);
-  // Recherche de technicien selon la latitude et la longitude de l'utilisateur depuis les paramètres de l'URL
-  router.get(
-    "/technicians/coordinates/:latitude/:longitude",
-    getTechnicianByCoordinatesController
-  );
   router.patch("/technicians/:id", updateTechnicianController);
 };

@@ -27,8 +27,12 @@ export const updateTechnician = (id: string, values: Record<string, any>) => {
 };
 
 // Recherche de technicien selon la latitude et la longitude de l'utilisateur
+// Il serait possible d'ajouter un rayon de recherche en paramètre
 
-export const getTechnicianByCoordinates = (latitude: any, longitude: any) => {
+export const getTechnicianByCoordinates = (
+  latitude: number,
+  longitude: number
+) => {
   return TechnicianModel.find({
     "address.coordinates": {
       $near: {
@@ -36,7 +40,7 @@ export const getTechnicianByCoordinates = (latitude: any, longitude: any) => {
           type: "Point",
           coordinates: [longitude, latitude],
         },
-        $maxDistance: 10000, // 10 km
+        $maxDistance: 10000, // recherche dans un rayon de 10 km
       },
     },
   })
