@@ -4,7 +4,7 @@ import {
   getAllClientsController,
   getClientController,
   updateClientController,
-} from "../controllers/clients";
+} from "../controllers/clients.controller";
 
 import { isAuthenticated } from "../middlewares";
 

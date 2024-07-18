@@ -6,7 +6,7 @@ import {
   getAllUsers,
   getUser,
   updateUser,
-} from "../controllers/users";
+} from "../controllers/users.controller";
 import { isAuthenticated, isOwner } from "../middlewares";
 
 export default (router: express.Router) => {

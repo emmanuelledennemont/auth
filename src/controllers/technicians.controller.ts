@@ -1,6 +1,7 @@
 import {
   getAllTechnicians,
   getTechnician,
+  getTechnicianByCategories,
   getTechnicianByCoordinates,
   updateTechnician,
 } from "@/services/technician.service";
@@ -68,8 +69,6 @@ export const updateTechnicianController = async (
   }
 };
 
-// Recherche de technicien selon la latitude et la longitude de l'utilisateur depuis les paramètres de requête
-
 export const getTechnicianByCoordinatesController = async (
   req: express.Request,
   res: express.Response
@@ -83,16 +82,46 @@ export const getTechnicianByCoordinatesController = async (
         .json({ error: "Missing latitude or longitude query parameter." });
     }
 
-    const technicians = await getTechnicianByCoordinates(
-      Number(latitude),
-      Number(longitude)
-    );
+    const lat = parseFloat(latitude as string);
+    const lon = parseFloat(longitude as string);
 
+    if (isNaN(lat) || isNaN(lon)) {
+      console.error("Invalid latitude or longitude.");
+      return res.status(400).json({ error: "Invalid latitude or longitude." });
+    }
+
+    const technicians = await getTechnicianByCoordinates(lat, lon);
     return res.status(200).json(technicians);
   } catch (error) {
     console.error("Error retrieving technicians by coordinates:", error);
     return res
       .status(500)
       .json({ error: "Failed to retrieve technicians by coordinates." });
+  }
+};
+
+export const getTechnicianByCategoryController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { categories } = req.query;
+    if (!categories) {
+      console.error("Missing categories query parameter.");
+      return res
+        .status(400)
+        .json({ error: "Missing categories query parameter." });
+    }
+
+    const categoryList = (categories as string).split(",");
+
+    const technicians = await getTechnicianByCategories(categoryList);
+
+    return res.status(200).json(technicians);
+  } catch (error) {
+    console.error("Error retrieving technicians by categories:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to retrieve technicians by categories." });
   }
 };

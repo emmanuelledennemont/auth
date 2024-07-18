@@ -28,6 +28,14 @@ export const seedUsers = async () => {
     });
   }
 
+  // Liste des catégories restreintes
+  const categories = [
+    "Grand Electromenager",
+    "Petit Electromenager",
+    "Devices",
+    "Mobilité",
+  ];
+
   // Générer 10 techniciens
   for (let i = 0; i < 10; i++) {
     const salt = random();
@@ -41,11 +49,25 @@ export const seedUsers = async () => {
       role: "Technician",
       bio: faker.lorem.paragraph(),
       address: {
-        street: faker.location.streetAddress(),
+        addressLine: faker.location.streetAddress(),
+        addressLine2: faker.location.secondaryAddress(),
         city: faker.location.city(),
         state: faker.location.state(),
         zip: faker.location.zipCode(),
+        country: faker.location.country(),
+        postalCode: faker.location.zipCode(),
+        coordinates: {
+          type: "Point",
+          coordinates: [faker.location.longitude(), faker.location.latitude()],
+        },
       },
+      categories: categories
+        .slice(0, faker.number.int({ min: 1, max: categories.length }))
+        .map((name) => ({
+          name,
+          image: faker.image.imageUrl(),
+          slug: name.toLowerCase().replace(/ /g, "-"),
+        })),
       openingHours: [
         { day: "Monday", open: "09:00", close: "17:00" },
         { day: "Tuesday", open: "09:00", close: "17:00" },

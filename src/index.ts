@@ -7,6 +7,7 @@ import express from "express";
 import http from "http";
 import mongoose from "mongoose";
 import router from "./router/index";
+import { seedUsers } from "./seeders/users.seeder";
 
 dotenv.config();
 
@@ -28,7 +29,7 @@ server.listen(8080, () => {
   console.log("🚀 Server is running on http://localhost:8080 🚀");
 
   // Appeler la fonction de seed au démarrage du serveur
-  // seedUsers();
+  seedUsers();
 });
 
 const MONGO_URL = process.env.MONGO_CONNECTION_STRING || "";

@@ -1,8 +1,8 @@
 import express from "express";
-import authentication from "../router/authentication";
-import clients from "./clients";
-import technicians from "./technicians";
-import users from "./users";
+import authentication from "./authentication.router";
+import clients from "./clients.router";
+import technicians from "./technicians.router";
+import users from "./users.router";
 const router = express.Router();
 
 export default (): express.Router => {

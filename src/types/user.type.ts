@@ -1,4 +1,6 @@
 import { Document } from "mongoose";
+import { IAddress } from "./address.type";
+import { ICategory } from "./cateogry.type";
 import { Role } from "./role.type";
 
 // Définir une interface pour le modèle User
@@ -33,8 +35,8 @@ export interface IClient extends IUser {
 
 export interface ITechnician extends IUser {
   bio: string;
-  address: any;
+  address: IAddress;
+  categories: Array<ICategory>;
   openingHours: Array<any>;
-  repairingCategories: Array<any>;
   rating: any;
 }

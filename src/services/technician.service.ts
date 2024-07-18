@@ -49,3 +49,13 @@ export const getTechnicianByCoordinates = (
       technicians.map((technician) => technician.toObject())
     );
 };
+
+export const getTechnicianByCategories = (categories: string[]) => {
+  return TechnicianModel.find({
+    "categories.slug": { $in: categories },
+  })
+    .select("-authentication -__v -__t")
+    .then((technicians) =>
+      technicians.map((technician) => technician.toObject())
+    );
+};
