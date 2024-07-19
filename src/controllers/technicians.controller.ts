@@ -3,6 +3,7 @@ import {
   getTechnician,
   getTechnicianByCategories,
   getTechnicianByCoordinates,
+  getTechnicianByFilters,
   updateTechnician,
 } from "@/services/technician.service";
 import express from "express";
@@ -123,5 +124,44 @@ export const getTechnicianByCategoryController = async (
     return res
       .status(500)
       .json({ error: "Failed to retrieve technicians by categories." });
+  }
+};
+
+// Recherche de technicien selon les catégories et les coordonnées de l'utilisateur depuis les paramètres de requête
+// Les coordonnées sont restrictives, mais les catégories sont cumulatives
+// Exemple: /technicians/filters?categories=petit-electromenager,devices&latitude=-71.7058&longitude=43.1925
+export const getTechnicianByFiltersController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { categories, latitude, longitude } = req.query;
+
+    if (!categories || !latitude || !longitude) {
+      console.error("Missing required query parameters.");
+      return res
+        .status(400)
+        .json({ error: "Missing required query parameters." });
+    }
+
+    const categoryList = (categories as string).split(",");
+    const lat = parseFloat(latitude as string);
+    const lon = parseFloat(longitude as string);
+
+    if (isNaN(lat) || isNaN(lon)) {
+      console.error("Invalid latitude or longitude.");
+      return res.status(400).json({ error: "Invalid latitude or longitude." });
+    }
+
+    const technicians = await getTechnicianByFilters(categoryList, lat, lon);
+    return res.status(200).json(technicians);
+  } catch (error) {
+    console.error(
+      "Error retrieving technicians by category and coordinates:",
+      error
+    );
+    return res.status(500).json({
+      error: "Failed to retrieve technicians by category and coordinates.",
+    });
   }
 };

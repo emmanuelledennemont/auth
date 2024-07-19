@@ -59,3 +59,32 @@ export const getTechnicianByCategories = (categories: string[]) => {
       technicians.map((technician) => technician.toObject())
     );
 };
+
+// Recherche de technicien selon les catégories et les coordonnées de l'utilisateur
+export const getTechnicianByFilters = (
+  categories: string[],
+  latitude: number,
+  longitude: number
+) => {
+  const query: any = {
+    "address.coordinates": {
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates: [longitude, latitude],
+        },
+        $maxDistance: 10000, // recherche dans un rayon de 10 km
+      },
+    },
+  };
+
+  if (categories.length > 0) {
+    query["categories.slug"] = { $in: categories };
+  }
+
+  return TechnicianModel.find(query)
+    .select("-authentication -__v -__t")
+    .then((technicians) =>
+      technicians.map((technician) => technician.toObject())
+    );
+};
