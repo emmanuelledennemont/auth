@@ -5,6 +5,7 @@ import {
   getClient,
   updateClient,
 } from "@/services/client.service";
+import { addRating } from "@/services/rating.service";
 
 import express from "express";
 import mongoose from "mongoose";
@@ -70,7 +71,10 @@ export const updateClientController = async (
   }
 };
 
-export const addFavoriteTechnician = async (
+// Controller pour ajouter un technicien aux favoris d'un client
+// Exemple: POST /clients/612f1f7f4f3b1e001f2e3b1f/favorites/612f1f7f4f3b1e001f2e3b1f
+
+export const addFavoriteTechnicianController = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -104,7 +108,10 @@ export const addFavoriteTechnician = async (
   }
 };
 
-export const removeFavoriteTechnician = async (
+// Controller pour supprimer un technicien des favoris d'un client
+// Exemple: DELETE /clients/612f1f7f4f3b1e001f2e3b1f/favorites/612f1f7f4f3b1e001f2e3b1f
+
+export const removeFavoriteTechnicianController = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -129,5 +136,32 @@ export const removeFavoriteTechnician = async (
     return res
       .status(500)
       .json({ error: "Failed to remove favorite technician." });
+  }
+};
+
+// Controller pour ajouter une évaluation à un technicien
+// Exemple: POST /ratings
+// {
+//   "rating": 5,
+//   "comment": "Great service!",
+//   "clientId": "612f1f7f4f3b1e001f2e3b1f",
+//   "technicianId": "612f1f7f4f3b1e001f2e3b1f"
+// }
+
+export const addRatingController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { rating, comment, clientId, technicianId } = req.body;
+
+    const newRating = await addRating(rating, comment, clientId, technicianId);
+
+    return res.status(201).json(newRating);
+  } catch (error: any) {
+    console.error("Error adding rating:", error);
+    return res
+      .status(500)
+      .json({ error: error.message || "Failed to add rating." });
   }
 };

@@ -7,5 +7,8 @@ export const TechnicianSchema: Schema = new Schema({
   address: { type: AddressSchema },
   categories: [{ type: CategorySchema }],
   openingHours: { type: Array },
-  rating: { type: Object },
+  rating: {
+    score: { type: Number, default: 0 },
+    reviews: { type: Number, default: 0 },
+  },
 });

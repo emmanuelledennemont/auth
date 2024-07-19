@@ -8,18 +8,23 @@ export interface IUser extends Document {
   email: string;
   username: string;
   role: Role;
+  firstname: string;
+  lastname: string;
+  phone: string;
   authentication: {
     salt: string;
     password: string;
     sessionToken?: string;
   };
 }
-
 export interface User extends IUser {
   _id: string;
   email: string;
   username: string;
   role: Role;
+  firstname: string;
+  lastname: string;
+  phone: string;
   authentication: {
     salt: string;
     password: string;

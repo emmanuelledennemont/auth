@@ -65,18 +65,31 @@ export const login = async (req: express.Request, res: express.Response) => {
     "email": "example@mail.com",
     "password": "pass",
     "username": "example",
-    "role": "Technician"
+    "role": "Technician",
+    "firstname": "First",
+    "lastname": "Last",
+    "phone": "1234567890"
   }
  */
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, password, username, role } = req.body;
+    const { email, password, username, role, firstname, lastname, phone } =
+      req.body;
 
-    if (!email || !password || !username || !role) {
-      return res
-        .status(400)
-        .json({ error: "Email, password, username, and role are required." });
+    if (
+      !email ||
+      !password ||
+      !username ||
+      !role ||
+      !firstname ||
+      !lastname ||
+      !phone
+    ) {
+      return res.status(400).json({
+        error:
+          "Email, password, username, role, firstname, lastname, and phone are required.",
+      });
     }
 
     const existingUser = await getUserByEmail(email);
@@ -89,12 +102,15 @@ export const register = async (req: express.Request, res: express.Response) => {
     const user = {
       email,
       username,
+      firstname,
+      lastname,
+      phone,
       role,
       authentication: {
         salt,
         password: authentication(salt, password),
       },
-    } as User;
+    } as unknown as User;
 
     const createRoles = await createRole(user);
 

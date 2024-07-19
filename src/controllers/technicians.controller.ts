@@ -6,6 +6,9 @@ import {
   getTechnicianByFilters,
   updateTechnician,
 } from "@/services/technician.service";
+
+import { getTechnicianRatings } from "@/services/rating.service";
+
 import express from "express";
 import mongoose from "mongoose";
 
@@ -162,6 +165,32 @@ export const getTechnicianByFiltersController = async (
     );
     return res.status(500).json({
       error: "Failed to retrieve technicians by category and coordinates.",
+    });
+  }
+};
+
+// Contrôleur pour obtenir les évaluations d'un technicien avec la moyenne des notes et le nombre de reviews
+// Exemple: GET /technicians/612f1f7f4f3b1e001f2e3b1f/ratings
+export const getTechnicianRatingsController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const technicianId = req.params.technicianId;
+
+    const { ratings, averageRating, totalRatings } = await getTechnicianRatings(
+      technicianId
+    );
+
+    return res.status(200).json({
+      ratings,
+      averageRating,
+      totalRatings,
+    });
+  } catch (error) {
+    console.error("Error retrieving ratings:", error);
+    return res.status(500).json({
+      error: (error as Error).message || "Failed to retrieve ratings.",
     });
   }
 };

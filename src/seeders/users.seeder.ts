@@ -15,6 +15,9 @@ export const seedUsers = async () => {
     clients.push({
       _id: undefined,
       email: faker.internet.email(),
+      firstname: faker.name.firstName(),
+      lastname: faker.name.lastName(),
+      phone: faker.phone.number(),
       username: faker.internet.userName(),
       password: password,
       role: "Client",
@@ -44,6 +47,9 @@ export const seedUsers = async () => {
     technicians.push({
       _id: undefined,
       email: faker.internet.email(),
+      firstname: faker.name.firstName(),
+      lastname: faker.name.lastName(),
+      phone: faker.phone.number(),
       username: faker.internet.userName(),
       password: password,
       role: "Technician",
@@ -79,10 +85,10 @@ export const seedUsers = async () => {
         faker.commerce.department(),
         faker.commerce.department(),
       ],
-      rating: {
-        score: faker.number.float({ min: 1, max: 5, precision: 0.1 }),
-        reviews: faker.number.int({ min: 1, max: 100 }),
-      },
+      // rating: {
+      //   score: faker.number.float({ min: 1, max: 5, precision: 0.1 }),
+      //   reviews: faker.number.int({ min: 1, max: 100 }),
+      // },
       authentication: {
         salt: salt,
         password: authentication(salt, password),

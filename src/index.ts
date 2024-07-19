@@ -1,3 +1,4 @@
+// import { seedUsers } from "@/seeders/users.seeder";
 import bodyParser from "body-parser";
 import compression from "compression";
 import cookieParser from "cookie-parser";
