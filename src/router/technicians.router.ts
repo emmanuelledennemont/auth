@@ -6,6 +6,7 @@ import {
   getTechnicianController,
   updateTechnicianController,
 } from "@/controllers/technicians.controller";
+
 import express from "express";
 
 export default (router: express.Router) => {
