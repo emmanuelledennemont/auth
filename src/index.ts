@@ -1,12 +1,15 @@
-import express from 'express';
-import http from 'http';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import compression from 'compression';
-import cors from 'cors';
-import mongoose from 'mongoose';
+// import { seedUsers } from "@/seeders/users.seeder";
+import bodyParser from "body-parser";
+import compression from "compression";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import http from "http";
+import mongoose from "mongoose";
+import router from "./router/index";
 
-import router from './router/index';
+dotenv.config();
 
 const app = express();
 
@@ -23,14 +26,18 @@ app.use(bodyParser.json());
 const server = http.createServer(app);
 
 server.listen(8080, () => {
-  console.log('Server is running on http://localhost:8080');
+  console.log("🚀 Server is running on http://localhost:8080 🚀");
+
+  // Appeler la fonction de seed au démarrage du serveur
+  // seedUsers();
 });
 
-const MONGO_URL =
-  'mongodb+srv://Emmanuelle:Emmanuelle@cluster0.ajjdzwm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGO_URL = process.env.MONGO_CONNECTION_STRING || "";
 
 mongoose.Promise = Promise;
-mongoose.connect(MONGO_URL);
-mongoose.connection.on('error', (error) => console.error(error));
 
-app.use('/', router());
+mongoose.connect(MONGO_URL);
+
+mongoose.connection.on("error", (error) => console.error(error));
+
+app.use("/", router());
