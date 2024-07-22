@@ -1,7 +1,7 @@
 # Dependencies
 /admin/node_modules
 /server/node_modules
-/admin/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node
+admin/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node
 
 
 # Next.js
