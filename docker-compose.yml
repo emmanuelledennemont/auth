@@ -1,4 +1,3 @@
-version: "3"
 services:
   backend:
     build: ./server
@@ -15,13 +14,11 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-    develop:
-      watch:
-        - action: sync
-          path: ./admin
-          target: /app
-          ignore:
-            - node_modules/
+    restart: always
+    volumes:
+      - ./admin:/app
+      - /app/node_modules
+      - /app/.next
 
   mongo:
     image: mongo

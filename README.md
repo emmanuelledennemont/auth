@@ -20,16 +20,20 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants sur v
 ## Installation
 
 1. Clonez le dépôt :
-   ```bash
-   git clone https://github.com/votre-nom-utilisateur/techrevive-admin.git
-   cd techrevive-admin
-   ```
+
+```bash
+git clone https://github.com/votre-nom-utilisateur/techrevive-admin.git
+cd techrevive-admin
+```
+
 2. Créez un fichier .env à la racine du projet et ajoutez les variables d'environnement nécessaires :
 
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:3001
-MONGODB_URI=votre_uri_mongodb 3. Installez les dépendances :
+MONGODB_URI=votre_uri_mongodb
 ```
+
+3.  Installez les dépendances :
 
 ```bash
 npm install
@@ -71,9 +75,26 @@ npm run dev
 
 ## Structure du projet
 
-• /admin : Contient le code du frontend Next.js pour l'interface administrateur
-• /server : Contient le code du backend Express pour l'API
-• /docker-compose.yml : Configuration Docker pour le projet
+├── admin/
+│ ├── package.json
+│ ├── .next/
+│ ├── node_modules/
+│ ├── pages/
+│ ├── public/
+│ ├── styles/
+│ ├── components/
+│ └── ...
+├── server/
+│ ├── package.json
+│ ├── node_modules/
+│ ├── src/
+│ │ ├── controllers/
+│ │ ├── models/
+│ │ ├── routes/
+│ │ └── app.js
+│ └── ...
+├── docker-compose.yml
+└── .env
 
 ## Développement
 
