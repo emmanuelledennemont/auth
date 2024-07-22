@@ -1,4 +1,4 @@
-// import { seedUsers } from "@/seeders/users.seeder";
+import { seedUsers } from "@/seeders/users.seeder";
 import bodyParser from "body-parser";
 import compression from "compression";
 import cookieParser from "cookie-parser";
@@ -26,19 +26,32 @@ app.use(bodyParser.json());
 
 const server = http.createServer(app);
 
-server.listen(3000, () => {
-  console.log("🚀 Server is running on http://localhost:3001 🚀");
-
-  // Appeler la fonction de seed au démarrage du serveur
-  // seedUsers();
-});
-
 const MONGO_URL = process.env.MONGO_CONNECTION_STRING || "";
 
 mongoose.Promise = Promise;
 
-mongoose.connect(MONGO_URL);
+mongoose
+  .connect(MONGO_URL, {
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
+  })
+  .then(async () => {
+    console.log("MongoDB connected successfully");
 
-mongoose.connection.on("error", (error) => console.error(error));
+    // Appeler la fonction de seed après la connexion à MongoDB
+    await seedUsers();
+
+    server.listen(3000, () => {
+      console.log("🚀 Server is running on http://localhost:3001 🚀");
+    });
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error);
+    process.exit(1);
+  });
+
+mongoose.connection.on("error", (error) =>
+  console.error("MongoDB error:", error)
+);
 
 app.use("/", router());

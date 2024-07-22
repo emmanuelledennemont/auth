@@ -4,6 +4,7 @@ import { CategorySchema } from "./category.schema";
 
 export const TechnicianSchema: Schema = new Schema({
   bio: { type: String },
+  sirene: { type: String, required: true },
   address: { type: AddressSchema },
   categories: [{ type: CategorySchema }],
   openingHours: { type: Array },

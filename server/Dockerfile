@@ -9,8 +9,8 @@ COPY . .
 
 EXPOSE 3000
 
-# Installer ts-node globalement
-RUN npm install -g ts-node
+# Installer nodemon globalement
+RUN npm install -g nodemon
 
-# Utiliser ts-node pour exécuter le fichier TypeScript
-CMD ["ts-node", "-r", "tsconfig-paths/register", "src/start.ts"]
+# Utiliser nodemon pour exécuter le fichier TypeScript
+CMD ["nodemon", "--exec", "ts-node", "-r", "tsconfig-paths/register", "src/start.ts"]

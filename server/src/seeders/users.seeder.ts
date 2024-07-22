@@ -5,6 +5,14 @@ import { authentication, random } from "@/helpers/index";
 import { faker } from "@faker-js/faker";
 
 export const seedUsers = async () => {
+  const clientCount = await ClientModel.countDocuments();
+  const technicianCount = await TechnicianModel.countDocuments();
+
+  if (clientCount > 0 || technicianCount > 0) {
+    console.log("Clients and/or Technicians already exist, skipping seeding.");
+    return;
+  }
+
   const clients: any[] = [];
   const technicians: any[] = [];
 
@@ -15,8 +23,9 @@ export const seedUsers = async () => {
     clients.push({
       _id: undefined,
       email: faker.internet.email(),
-      firstname: faker.name.firstName(),
-      lastname: faker.name.lastName(),
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      profileImage: faker.image.url(),
       phone: faker.phone.number(),
       username: faker.internet.userName(),
       password: password,
@@ -47,13 +56,15 @@ export const seedUsers = async () => {
     technicians.push({
       _id: undefined,
       email: faker.internet.email(),
-      firstname: faker.name.firstName(),
-      lastname: faker.name.lastName(),
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
       phone: faker.phone.number(),
       username: faker.internet.userName(),
       password: password,
       role: "Technician",
       bio: faker.lorem.paragraph(),
+      sirene: faker.string.alphanumeric(9),
+      profileImage: faker.image.url(),
       address: {
         addressLine: faker.location.streetAddress(),
         addressLine2: faker.location.secondaryAddress(),
@@ -71,7 +82,7 @@ export const seedUsers = async () => {
         .slice(0, faker.number.int({ min: 1, max: categories.length }))
         .map((name) => ({
           name,
-          image: faker.image.imageUrl(),
+          image: faker.image.url(),
           slug: name.toLowerCase().replace(/ /g, "-"),
         })),
       openingHours: [
@@ -85,10 +96,6 @@ export const seedUsers = async () => {
         faker.commerce.department(),
         faker.commerce.department(),
       ],
-      // rating: {
-      //   score: faker.number.float({ min: 1, max: 5, precision: 0.1 }),
-      //   reviews: faker.number.int({ min: 1, max: 100 }),
-      // },
       authentication: {
         salt: salt,
         password: authentication(salt, password),
@@ -98,9 +105,6 @@ export const seedUsers = async () => {
 
   try {
     await UserModel.deleteMany({});
-    await ClientModel.deleteMany({});
-    await TechnicianModel.deleteMany({});
-
     await ClientModel.insertMany(clients);
     await TechnicianModel.insertMany(technicians);
 
