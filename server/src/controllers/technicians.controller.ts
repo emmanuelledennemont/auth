@@ -1,9 +1,11 @@
 import {
+  findCoordinates,
   getAllTechnicians,
   getTechnician,
   getTechnicianByCategories,
   getTechnicianByCoordinates,
   getTechnicianByFilters,
+  getTechniciansByCoordinates,
   updateTechnician,
 } from "@/services/technician.service";
 
@@ -104,6 +106,43 @@ export const getTechnicianByCoordinatesController = async (
   }
 };
 
+export const getTechniciansByCityController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { city } = req.query;
+    if (!city) {
+      console.error("Missing city query parameter.");
+      return res.status(400).json({ error: "Missing city query parameter." });
+    }
+
+    const coordinates = await findCoordinates(city as string);
+
+    if (!coordinates || !coordinates.latitude || !coordinates.longitude) {
+      console.error("Coordinates not found for the city.");
+      return res
+        .status(404)
+        .json({ error: "Coordinates not found for the city." });
+    }
+
+    const { latitude, longitude } = coordinates;
+
+    const technicians = await getTechniciansByCoordinates(latitude, longitude);
+
+    return res.status(200).json({
+      city: city,
+      coordinates: coordinates,
+      technicians: technicians,
+    });
+  } catch (error) {
+    console.error("Error retrieving technicians by city:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to retrieve technicians by city." });
+  }
+};
+
 export const getTechnicianByCategoryController = async (
   req: express.Request,
   res: express.Response
@@ -168,6 +207,9 @@ export const getTechnicianByFiltersController = async (
     });
   }
 };
+// function findCoordinates(city: string | string[] | import("qs").ParsedQs | import("qs").ParsedQs[]) {
+//   throw new Error("Function not implemented.");
+// }
 
 // Contrôleur pour obtenir les évaluations d'un technicien avec la moyenne des notes et le nombre de reviews
 // Exemple: GET /technicians/612f1f7f4f3b1e001f2e3b1f/ratings

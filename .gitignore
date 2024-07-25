@@ -1,8 +1,11 @@
 # Dependencies
-admin/node_modules
+/admin/node_modules
 /server/node_modules
-admin/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node
 
+# Environment variables
+.env
+/admin/.env
+/server/.env
 
 # Next.js
 /admin/.next/
@@ -67,9 +70,3 @@ docker-compose.override.yml
 
 # Specific large files
 admin/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node
-
-# Optional: Uncomment if you're using yarn
-# yarn.lock
-
-# Optional: Uncomment if you're using npm
-# package-lock.json

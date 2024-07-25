@@ -1,10 +1,11 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { axiosInstance } from "@/lib/axios-config";
 import { Technician } from "@/types/technician.type";
+import { AvatarImage } from "@radix-ui/react-avatar";
 import {
   DirectionsRenderer,
   DirectionsService,
@@ -12,7 +13,7 @@ import {
   LoadScript,
   Marker,
 } from "@react-google-maps/api";
-import { Clock, Hash, Mail, MapPin, Phone, Star } from "lucide-react";
+import { Building, Clock, Hash, Mail, MapPin, Phone, Star } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -104,7 +105,10 @@ export default function TechnicianDetails() {
       <div className="w-full lg:w-1/5 p-4 bg-white shadow-md lg:h-auto lg:overflow-y-auto">
         <div className="flex flex-col items-center mb-6">
           <Avatar className="w-24 h-24 mb-2">
-            <AvatarFallback>{technician.username.charAt(0)}</AvatarFallback>
+            <AvatarImage
+              src={technician.profileImage}
+              alt={technician.username}
+            />
           </Avatar>
           <h2 className="text-xl font-semibold">{technician.username}</h2>
           <p className="text-sm text-gray-500">{technician.role}</p>
@@ -112,7 +116,7 @@ export default function TechnicianDetails() {
         <div className="space-y-4">
           <div className="flex items-center">
             <Hash className="mr-2 h-4 w-4" />
-            {/* <span className="text-sm">{technician._id}</span> */}
+            <span className="text-sm">{technician._id}</span>
           </div>
           <div className="flex items-center">
             <Mail className="mr-2 h-4 w-4" />
@@ -121,6 +125,10 @@ export default function TechnicianDetails() {
           <div className="flex items-center">
             <Phone className="mr-2 h-4 w-4" />
             <span className="text-sm">{technician.phone}</span>
+          </div>
+          <div className="flex items-center">
+            <Building className="mr-2 h-4 w-4" />
+            <span className="text-sm">{technician.sirene}</span>
           </div>
 
           <div className="flex items-center">

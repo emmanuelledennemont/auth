@@ -6,6 +6,8 @@ export interface Technician {
   role: string;
   bio: string;
   phone: string;
+  sirene: string;
+  profileImage: string;
   rating: {
     score: number;
     reviews: number;

@@ -9,7 +9,9 @@ export const seedUsers = async () => {
   const technicianCount = await TechnicianModel.countDocuments();
 
   if (clientCount > 0 || technicianCount > 0) {
-    console.log("Clients and/or Technicians already exist, skipping seeding.");
+    console.log(
+      "👥 Clients and/or Technicians already exist, skipping seeding."
+    );
     return;
   }
 

@@ -74,13 +74,13 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardTitle className="text-2xl">Connexion</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account.
+          Connectez-vous à votre compte pour accéder au tableau de bord.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        <form onSubmit={onSubmit}>
+      <CardContent>
+        <form onSubmit={onSubmit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -92,7 +92,7 @@ export function LoginForm() {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Mot de passe</Label>
             <Input
               id="password"
               type="password"
@@ -103,9 +103,7 @@ export function LoginForm() {
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <CardFooter>
-            <Button type="submit" className="w-full">
-              Sign in
-            </Button>
+            <Button className="w-full">Se connecter</Button>
           </CardFooter>
         </form>
       </CardContent>

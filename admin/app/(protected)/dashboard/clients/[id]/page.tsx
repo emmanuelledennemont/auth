@@ -1,16 +1,20 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { axiosInstance } from "@/lib/axios-config";
 import { Client } from "@/types/client.type";
+import { Technician } from "@/types/technician.type";
+import { AvatarImage } from "@radix-ui/react-avatar";
 import { Hash, Mail, Phone, User } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ClientDetails() {
   const params = useParams();
   const [client, setClient] = useState<Client | null>(null);
+  const [technicians, setTechnicians] = useState<Technician[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,6 +26,18 @@ export default function ClientDetails() {
           `/clients/${params.id}`
         );
         setClient(response.data);
+
+        // Fetch the technicians for the client's favorites
+        const technicianIds = response.data.favorites.map(
+          (favorite) => favorite
+        );
+        const technicianResponses = await Promise.all(
+          technicianIds.map((id) =>
+            axiosInstance.get<Technician>(`/technicians/${id}`)
+          )
+        );
+        const techniciansData = technicianResponses.map((res) => res.data);
+        setTechnicians(techniciansData);
       } catch (error) {
         console.error("Error fetching client:", error);
         setError("Failed to fetch client details");
@@ -60,7 +76,8 @@ export default function ClientDetails() {
       <div className="w-full lg:w-1/5 p-4 bg-white shadow-md lg:h-auto lg:overflow-y-auto">
         <div className="flex flex-col items-center mb-6">
           <Avatar className="w-24 h-24 mb-2">
-            <AvatarFallback>{client.username.charAt(0)}</AvatarFallback>
+            {/* <AvatarFallback>{client.username.charAt(0)}</AvatarFallback> */}
+            <AvatarImage src={client.profileImage} alt={client.username} />
           </Avatar>
           <h2 className="text-xl font-semibold">{client.username}</h2>
           <p className="text-sm text-gray-500">{client.role}</p>
@@ -116,10 +133,14 @@ export default function ClientDetails() {
               <CardTitle>Favorites</CardTitle>
             </CardHeader>
             <CardContent>
-              {client.favorites.length > 0 ? (
-                <ul className="list-disc pl-5">
-                  {client.favorites.map((favorite, index) => (
-                    <li key={index}>{favorite}</li>
+              {technicians.length > 0 ? (
+                <ul>
+                  {technicians.map((tech, index) => (
+                    <li key={index}>
+                      <Link href={`/dashboard/technicians/${tech._id}`}>
+                        {tech.username}
+                      </Link>
+                    </li>
                   ))}
                 </ul>
               ) : (

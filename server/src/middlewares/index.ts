@@ -25,7 +25,7 @@ export const isAuthenticated = async (
       return res.status(403).json({ error: "Invalid authentication token." });
     }
 
-    console.log("Authenticated user:", existingUser);
+    // console.log("Authenticated user:", existingUser);
 
     merge(req, { identity: existingUser });
 

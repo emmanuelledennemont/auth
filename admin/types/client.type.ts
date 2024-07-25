@@ -9,4 +9,5 @@ export interface Client {
   favorites: string[];
   repairList: string[];
   saving: any[];
+  profileImage: string;
 }

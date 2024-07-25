@@ -1,4 +1,8 @@
+import axios from "axios";
+import dotenv from "dotenv";
 import { TechnicianModel } from "../db/models/technician.model";
+
+dotenv.config();
 
 export const getAllTechnicians = () => {
   return TechnicianModel.find()
@@ -48,6 +52,62 @@ export const getTechnicianByCoordinates = (
     .then((technicians) =>
       technicians.map((technician) => technician.toObject())
     );
+};
+
+export const findCoordinates = async (
+  city: string
+): Promise<{ latitude: number; longitude: number }> => {
+  try {
+    const apiKey = process.env.OPENCAGE_API_KEY;
+
+    const response = await axios.get(
+      "https://api.opencagedata.com/geocode/v1/json",
+      {
+        params: {
+          q: city,
+          key: apiKey,
+          limit: 1,
+        },
+      }
+    );
+
+    console.log("Response from OpenCage:", response.data);
+    if (response.data.results.length > 0) {
+      const { lat, lng } = response.data.results[0].geometry;
+
+      return { latitude: lat, longitude: lng };
+    } else {
+      throw new Error(`No results found for city: ${city}`);
+    }
+  } catch (error) {
+    console.error("Error finding coordinates:", error);
+    throw new Error("Failed to retrieve coordinates.");
+  }
+};
+
+export const getTechniciansByCoordinates = async (
+  latitude: number,
+  longitude: number
+) => {
+  try {
+    const technicians = await TechnicianModel.find({
+      "address.coordinates": {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [longitude, latitude],
+          },
+          $maxDistance: 10000, // recherche dans un rayon de 10 km
+        },
+      },
+    })
+      .select("-authentication -__v -__t")
+      .exec();
+    return technicians.map((technician) => technician.toObject());
+  } catch (error) {
+    console.error("Error retrieving technicians by coordinates:", error);
+    throw new Error("Failed to retrieve technicians by coordinates.");
+  }
 };
 
 export const getTechnicianByCategories = (categories: string[]) => {

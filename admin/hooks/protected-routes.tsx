@@ -3,7 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+export default function ProtectedRoute({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -13,6 +17,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       router.push("/");
     } else {
       setIsAuthenticated(true);
+      router.push("/dashboard");
     }
   }, [router]);
 
@@ -21,6 +26,4 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   return <>{children}</>;
-};
-
-export default ProtectedRoute;
+}
