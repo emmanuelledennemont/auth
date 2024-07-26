@@ -25,6 +25,8 @@ export const createUserWithTechnicianRole = (values: Record<string, any>) => {
 };
 
 export const updateTechnician = (id: string, values: Record<string, any>) => {
+
+  console.log(values.address.addressLine)
   return TechnicianModel.findByIdAndUpdate(id, values, { new: true })
     .select("-authentication -__v -__t")
     .then((technician) => technician?.toObject());

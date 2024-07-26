@@ -62,7 +62,17 @@ export const updateTechnicianController = async (
       console.error("Invalid Technician ID:", technicianId);
       return res.status(400).json({ error: "Invalid Technician ID." });
     }
-
+    if (req.body.address) {
+      const coordinates =   await findCoordinates(req.body.address.addressLine+","+req.body.address.city+","+req.body.address.zip as string);
+    
+      if (!coordinates || !coordinates.latitude || !coordinates.longitude) {
+        console.error("Coordinates not found for the city.");
+      
+      }
+      console.log(coordinates)
+      req.body.address.coordinates.coordinates = [coordinates.longitude,coordinates.latitude ]
+    }
+    
     const technician = await updateTechnician(technicianId, req.body);
     if (!technician) {
       console.error("Technician not found:", technicianId);
