@@ -12,5 +12,8 @@ EXPOSE 3000
 # Installer nodemon globalement
 RUN npm install -g nodemon
 
-# Utiliser nodemon pour exécuter le fichier TypeScript
-CMD ["nodemon", "--exec", "ts-node", "-r", "tsconfig-paths/register", "src/start.ts"]
+# Ajouter le script de démarrage
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
