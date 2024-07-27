@@ -228,7 +228,7 @@ export const getTechnicianRatingsController = async (
   res: express.Response
 ) => {
   try {
-    const technicianId = req.params.technicianId;
+    const {technicianId} = req.params;
 
     const { ratings, averageRating, totalRatings } = await getTechnicianRatings(
       technicianId

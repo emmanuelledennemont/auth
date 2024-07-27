@@ -4,12 +4,14 @@ import {
   getAllClientsController,
   getClientController,
   updateClientController,
+  addNewReparation,
 } from "../controllers/clients.controller";
 
 import {
   addFavoriteTechnicianController,
   addRatingController,
   removeFavoriteTechnicianController,
+
 } from "@/controllers/clients.controller";
 
 import { isAuthenticated } from "../middlewares";
@@ -25,6 +27,7 @@ export default (router: express.Router) => {
     addFavoriteTechnicianController
   );
   router.post("/ratings", addRatingController);
+  router.post("/reparation", addNewReparation);
   router.delete(
     "/clients/:clientId/favorites/:technicianId",
     removeFavoriteTechnicianController

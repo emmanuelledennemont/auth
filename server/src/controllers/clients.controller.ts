@@ -6,6 +6,7 @@ import {
   updateClient,
 } from "@/services/client.service";
 import { addRating } from "@/services/rating.service";
+import { addRepair } from "@/services/repair.service";
 
 import express from "express";
 import mongoose from "mongoose";
@@ -163,5 +164,36 @@ export const addRatingController = async (
     return res
       .status(500)
       .json({ error: error.message || "Failed to add rating." });
+  }
+};
+
+
+export const addNewReparation= async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+
+    const { marque, model,description, categories, date, client, technician } = req.body;
+    const reparation = {
+      marque,
+      model, 
+      description, 
+      categories, 
+      date, 
+      client, 
+      technician 
+        }
+
+
+
+    const newReparation = await addRepair(reparation);
+
+    return res.status(201).json(newReparation);
+  } catch (error: any) {
+    console.error("Error adding repartion:", error);
+    return res
+      .status(500)
+      .json({ error: error.message || "Failed to add reparation." });
   }
 };
