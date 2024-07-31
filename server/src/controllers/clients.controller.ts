@@ -208,11 +208,11 @@ export const getClientRepairController = async (
   res: express.Response
 ) => {
   try {
-    const {clientID} = req.params;
-    console.log(clientID)
+    const {clientId} = req.params;
+    console.log(clientId)
 
     const { repair, totalRepair} = await getClientRepair(
-      clientID
+      clientId
     );
 
     return res.status(200).json({
