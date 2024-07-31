@@ -10,6 +10,7 @@ import {
 } from "@/services/technician.service";
 
 import { getTechnicianRatings } from "@/services/rating.service";
+import { getTechnicianRepair } from "@/services/repair.service";
 
 import express from "express";
 import mongoose from "mongoose";
@@ -243,6 +244,29 @@ export const getTechnicianRatingsController = async (
     console.error("Error retrieving ratings:", error);
     return res.status(500).json({
       error: (error as Error).message || "Failed to retrieve ratings.",
+    });
+  }
+};
+
+export const getTechnicianRepairController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const {technicianId} = req.params;
+
+    const { repair, totalRepair } = await getTechnicianRepair(
+      technicianId
+    );
+
+    return res.status(200).json({
+      repair,
+      totalRepair,
+    });
+  } catch (error) {
+    console.error("Error retrieving repairs:", error);
+    return res.status(500).json({
+      error: (error as Error).message || "Failed to retrieve repairs.",
     });
   }
 };

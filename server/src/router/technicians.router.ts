@@ -7,6 +7,7 @@ import {
   getTechnicianRatingsController,
   getTechniciansByCityController,
   updateTechnicianController,
+  getTechnicianRepairController
 } from "@/controllers/technicians.controller";
 
 import express from "express";
@@ -20,7 +21,13 @@ export default (router: express.Router) => {
     "/technicians/:technicianId/ratings",
     getTechnicianRatingsController
   );
+  router.get(
+    "/technicians/:technicianId/repair",
+    getTechnicianRepairController
+  );
+  
   router.get("/technicians/byCity", getTechniciansByCityController);
   router.get("/technicians/:id", getTechnicianController);
   router.patch("/technicians/:id", updateTechnicianController);
+  
 };

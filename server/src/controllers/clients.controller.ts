@@ -6,7 +6,11 @@ import {
   updateClient,
 } from "@/services/client.service";
 import { addRating } from "@/services/rating.service";
-import { addRepair } from "@/services/repair.service";
+import { 
+  addRepair, 
+  getClientRepair,
+    
+} from "@/services/repair.service";
 
 import express from "express";
 import mongoose from "mongoose";
@@ -195,5 +199,30 @@ export const addNewReparation= async (
     return res
       .status(500)
       .json({ error: error.message || "Failed to add reparation." });
+  }
+};
+
+
+export const getClientRepairController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const {clientId} = req.params;
+    console.log(clientId)
+
+    const { repair, totalRepair} = await getClientRepair(
+      clientId
+    );
+
+    return res.status(200).json({
+      repair,
+      totalRepair,
+    });
+  } catch (error) {
+    console.error("Error retrieving repair:", error);
+    return res.status(500).json({
+      error: (error as Error).message || "Failed to retrieve rapairs.",
+    });
   }
 };

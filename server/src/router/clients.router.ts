@@ -5,12 +5,11 @@ import {
   getClientController,
   updateClientController,
   addNewReparation,
-} from "../controllers/clients.controller";
-
-import {
   addFavoriteTechnicianController,
   addRatingController,
   removeFavoriteTechnicianController,
+  getClientRepairController,
+
 
 } from "@/controllers/clients.controller";
 
@@ -27,11 +26,15 @@ export default (router: express.Router) => {
     addFavoriteTechnicianController
   );
   router.post("/ratings", addRatingController);
+  router.get(
+    "/clients/:clientId/repair",
+    getClientRepairController
+  );
   router.post("/reparation", addNewReparation);
   router.delete(
     "/clients/:clientId/favorites/:technicianId",
     removeFavoriteTechnicianController
   );
-
+  
   return router;
 };

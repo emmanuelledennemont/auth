@@ -22,3 +22,58 @@ export const addRepair = async ( values: Record<string, any>) => {
     .save()
     .then((repair) => repair.toObject());
 }
+
+
+
+export const getTechnicianRepair = async (technicianId: string) => {
+  // Vérifier si le technicien existe
+  const technician = await TechnicianModel.findById(technicianId);
+  if (!technician) {
+    throw new Error("Technician not found.");
+  }
+
+  // Obtenir les réparation du technicien
+  const repair = await RepairModel.find({
+    technician: technicianId,
+  })
+    .populate("client", "firstname lastname")
+    .select("-__v");
+
+
+  const totalRepair = repair.length;
+
+
+  return {
+    repair,
+    totalRepair,
+  };
+};
+
+
+
+export const getClientRepair = async (clientId: string) => {
+    // Vérifier si le technicien existe
+    console.log(clientId)
+    const client = await ClientModel.findById(clientId);
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+  
+    // Obtenir les réparation du client
+    const repair = await RepairModel.find({
+      client: clientId,
+    })
+      .populate("technician", "firstname lastname")
+      .select("-__v");
+  
+  
+    const totalRepair = repair.length;
+  
+  
+    return {
+      repair,
+      totalRepair,
+    };
+  };
+
+
