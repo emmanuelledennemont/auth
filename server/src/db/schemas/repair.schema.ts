@@ -8,7 +8,7 @@ export const RepairSchema = new Schema (
         model: { type: String },
         description :  { type: String },
         dianostic :  { type: String },
-        //categories: [{ type: CategorySchema }],
+        categories: [{ type: CategorySchema }],
         date: {type : Date }, 
         documentUrl : {type : String },
         statusRepair: {
