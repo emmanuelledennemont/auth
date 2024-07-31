@@ -6,11 +6,7 @@ import {
   updateClient,
 } from "@/services/client.service";
 import { addRating } from "@/services/rating.service";
-import { 
-  addRepair, 
-  getClientRepair,
-    
-} from "@/services/repair.service";
+import { addRepair, getClientRepair } from "@/services/repair.service";
 
 import express from "express";
 import mongoose from "mongoose";
@@ -171,25 +167,22 @@ export const addRatingController = async (
   }
 };
 
-
-export const addNewReparation= async (
+export const addNewReparation = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-
-    const { marque, model,description, categories, date, client, technician } = req.body;
+    const { marque, model, description, categories, date, client, technician } =
+      req.body;
     const reparation = {
       marque,
-      model, 
-      description, 
-      categories, 
-      date, 
-      client, 
-      technician 
-        }
-
-
+      model,
+      description,
+      categories,
+      date,
+      client,
+      technician,
+    };
 
     const newReparation = await addRepair(reparation);
 
@@ -202,18 +195,15 @@ export const addNewReparation= async (
   }
 };
 
-
 export const getClientRepairController = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    const {clientId} = req.params;
-    console.log(clientId)
+    const { clientId } = req.params;
+    console.log(clientId);
 
-    const { repair, totalRepair} = await getClientRepair(
-      clientId
-    );
+    const { repair, totalRepair } = await getClientRepair(clientId);
 
     return res.status(200).json({
       repair,

@@ -41,7 +41,7 @@ mongoose
     // Appeler la fonction de seed après la connexion à MongoDB
     await seedUsers();
 
-    server.listen(3000, () => {
+    server.listen(8080, () => {
       console.log("🚀 Server is running on http://localhost:3001 🚀");
     });
   })
