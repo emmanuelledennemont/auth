@@ -2,12 +2,12 @@ import {
   findCoordinates,
   getAllTechnicians,
   getTechnician,
+  getTechnicianAvailableSlots,
   getTechnicianByCategories,
   getTechnicianByCoordinates,
   getTechnicianByFilters,
   getTechniciansByCoordinates,
   updateTechnician,
-  getTechnicianAvailableSlots
 } from "@/services/technician.service";
 
 import { getTechnicianRatings } from "@/services/rating.service";
@@ -65,16 +65,24 @@ export const updateTechnicianController = async (
       return res.status(400).json({ error: "Invalid Technician ID." });
     }
     if (req.body.address) {
-      const coordinates =   await findCoordinates(req.body.address.addressLine+","+req.body.address.city+","+req.body.address.zip as string);
-    
+      const coordinates = await findCoordinates(
+        (req.body.address.addressLine +
+          "," +
+          req.body.address.city +
+          "," +
+          req.body.address.zip) as string
+      );
+
       if (!coordinates || !coordinates.latitude || !coordinates.longitude) {
         console.error("Coordinates not found for the city.");
-      
       }
-      console.log(coordinates)
-      req.body.address.coordinates.coordinates = [coordinates.longitude,coordinates.latitude ]
+      console.log(coordinates);
+      req.body.address.coordinates.coordinates = [
+        coordinates.longitude,
+        coordinates.latitude,
+      ];
     }
-    
+
     const technician = await updateTechnician(technicianId, req.body);
     if (!technician) {
       console.error("Technician not found:", technicianId);
@@ -230,7 +238,7 @@ export const getTechnicianRatingsController = async (
   res: express.Response
 ) => {
   try {
-    const {technicianId} = req.params;
+    const { technicianId } = req.params;
 
     const { ratings, averageRating, totalRatings } = await getTechnicianRatings(
       technicianId
@@ -254,11 +262,9 @@ export const getTechnicianRepairController = async (
   res: express.Response
 ) => {
   try {
-    const {technicianId} = req.params;
+    const { technicianId } = req.params;
 
-    const { repair, totalRepair } = await getTechnicianRepair(
-      technicianId
-    );
+    const { repair, totalRepair } = await getTechnicianRepair(technicianId);
 
     return res.status(200).json({
       repair,
@@ -283,6 +289,8 @@ export const getTechnicianAvailabilityController = async (
     return res.status(200).json(slots);
   } catch (error) {
     console.error("Error retrieving technician availability:", error);
-    return res.status(500).json({ error: "Failed to retrieve technician availability." });
+    return res
+      .status(500)
+      .json({ error: "Failed to retrieve technician availability." });
   }
 };

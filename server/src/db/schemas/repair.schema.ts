@@ -7,7 +7,7 @@ export const RepairSchema = new Schema({
   description: { type: String },
   dianostic: { type: String },
   categories: [{ type: CategorySchema }],
-  date: { type: Date },
+  date: { type: Date, timeZone: "Europe/Paris" },
   documentUrl: { type: String },
   statusRepair: {
     type: String,
