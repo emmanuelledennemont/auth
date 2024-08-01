@@ -1,7 +1,9 @@
 import axios from "axios";
 import dotenv from "dotenv";
 import { TechnicianModel } from "../db/models/technician.model";
-
+import moment from 'moment';
+import { RepairModel } from "@/db/models/repair.model";
+import { ITechnician } from "@/types/user.type";
 dotenv.config();
 
 export const getAllTechnicians = () => {
@@ -39,14 +41,10 @@ export const getTechnicianByCoordinates = (
   longitude: number
 ) => {
   return TechnicianModel.find({
-    "address.coordinates": {
-      $near: {
-        $geometry: {
-          type: "Point",
-          coordinates: [longitude, latitude],
-        },
-        $maxDistance: 10000, // recherche dans un rayon de 10 km
-      },
+    "address.coordinates.coordinates": {
+      $geoWithin: {
+        $centerSphere: [[longitude, latitude], 10 / 3963.2] // 10 miles radius
+      }
     },
   })
     .select("-authentication -__v -__t")
@@ -148,4 +146,63 @@ export const getTechnicianByFilters = (
     .then((technicians) =>
       technicians.map((technician) => technician.toObject())
     );
+
+
+  
 };
+interface Slot {
+  start: Date;
+  end: Date;
+}
+const calculateAvailableSlots = (technician: ITechnician) => {
+  const availability: Slot[] = [];
+  const now = moment().startOf('day'); // Début de la journée en UTC
+  console.log(now.toDate())
+  const slotDuration = technician.slotDuration || 30; // Valeur par défaut de 30 minutes si non spécifiée
+  const openingHours = technician.openingHours;
+
+  openingHours.forEach(daySchedule => {
+    const day = moment().day(daySchedule.day).startOf('day'); // Début de la journée en UTC
+    if (day.isBefore(now, 'day')) {
+      day.add(1, 'weeks'); // Ajoute une semaine si le jour est passé
+    }
+
+    daySchedule.slots.forEach((slot: { start: string; end: string }) => {
+      let start = moment(day.format('YYYY-MM-DD') + ' ' + slot.start, 'YYYY-MM-DD HH:mm'); // Ajouter 1 heure
+      const end = moment(day.format('YYYY-MM-DD') + ' ' + slot.end, 'YYYY-MM-DD HH:mm'); // Ajouter 1 heure
+  console.log("start : " + start.toDate())
+  console.log("end : " + end.toDate())
+      while (start.isSameOrBefore(end)) {
+        availability.push({
+          start: start.toDate(), // Convertir en objet Date
+          end: start.clone().add(slotDuration, 'minutes').toDate() // Convertir en objet Date
+        });
+       start.add(slotDuration, 'minutes'); // Ajouter la durée du créneau
+      }
+    });
+  });
+
+  return availability;
+};
+
+export const getTechnicianAvailableSlots = async (technicianId: string) => {
+  const technician = await TechnicianModel.findById(technicianId).lean();
+  if (!technician) throw new Error("Technician not found.");
+
+  const bookedSlots = await RepairModel.find({ technician: technicianId }).select('date');
+  const bookedDates = bookedSlots.map(repair => moment(repair.date)); 
+
+  const availableSlots = calculateAvailableSlots(technician).filter(slot =>
+    !bookedDates.some(date => date.isSame(moment(slot.start)))
+  );
+
+  // Convertir les créneaux horaires pour l'affichage 
+  const localAvailableSlots = availableSlots.map(slot => ({
+    start: moment(slot.start).format('YYYY-MM-DD HH:mm:ss'),
+    end: moment(slot.end).format('YYYY-MM-DD HH:mm:ss')
+  }));
+
+  return localAvailableSlots;
+};
+
+

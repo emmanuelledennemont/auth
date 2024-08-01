@@ -7,6 +7,7 @@ import {
   getTechnicianByFilters,
   getTechniciansByCoordinates,
   updateTechnician,
+  getTechnicianAvailableSlots
 } from "@/services/technician.service";
 
 import { getTechnicianRatings } from "@/services/rating.service";
@@ -268,5 +269,20 @@ export const getTechnicianRepairController = async (
     return res.status(500).json({
       error: (error as Error).message || "Failed to retrieve repairs.",
     });
+  }
+};
+
+export const getTechnicianAvailabilityController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { technicianId } = req.params;
+
+    const slots = await getTechnicianAvailableSlots(technicianId);
+    return res.status(200).json(slots);
+  } catch (error) {
+    console.error("Error retrieving technician availability:", error);
+    return res.status(500).json({ error: "Failed to retrieve technician availability." });
   }
 };

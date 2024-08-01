@@ -5,3 +5,5 @@ import { TechnicianSchema } from "../schemas/technician.schema";
 
 export const TechnicianModel: Model<ITechnician> =
   UserModel.discriminator<ITechnician>("Technician", TechnicianSchema);
+
+  

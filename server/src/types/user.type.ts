@@ -44,4 +44,5 @@ export interface ITechnician extends IUser {
   categories: Array<ICategory>;
   openingHours: Array<any>;
   rating: any;
+  slotDuration?: number;
 }
