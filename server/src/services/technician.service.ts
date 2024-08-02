@@ -154,12 +154,13 @@ interface Slot {
 
 const calculateAvailableSlots = (technician: ITechnician) => {
   const availability: Slot[] = [];
-  const now = moment().tz("Europe/Paris").startOf("day");
+  const now = moment().tz("Europe/Paris")
   const startOfWeek = now.clone().startOf("isoWeek");
   const endOfWeek = startOfWeek.clone().endOf("isoWeek");
   const slotDuration = technician.slotDuration || 30;
 
   // Parcourir chaque jour de la semaine
+ 
   for (
     let day = startOfWeek;
     day.isSameOrBefore(endOfWeek);

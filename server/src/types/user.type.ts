@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 import { IAddress } from "./address.type";
-import { ICategory } from "./category.type";
+import { ICategory } from "./cateogry.type";
 import { Role } from "./role.type";
 
 // Définir une interface pour le modèle User
