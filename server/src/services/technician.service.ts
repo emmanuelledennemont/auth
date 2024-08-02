@@ -150,26 +150,24 @@ export const getTechnicianByFilters = (
 interface Slot {
   start: string;
   end: string;
-}
-
-const calculateAvailableSlots = (technician: ITechnician) => {
+};
+const calculateAvailableSlots = (technician: ITechnician, day : Number, week : Number ) => {
   const availability: Slot[] = [];
-  const now = moment().tz("Europe/Paris")
-  const startOfWeek = now.clone().startOf("isoWeek");
-  const endOfWeek = startOfWeek.clone().endOf("isoWeek");
+ 
+  const now = moment().tz("Europe/Paris").add( day.valueOf(), 'day').add(week.valueOf(), 'week');
   const slotDuration = technician.slotDuration || 30;
 
-  // Parcourir chaque jour de la semaine
- 
-  for (
-    let day = startOfWeek;
-    day.isSameOrBefore(endOfWeek);
-    day.add(1, "day")
-  ) {
-    const dayOfWeek = day.format("dddd");
+  // Définir une date de départ à aujourd'hui
+  let currentDay = now.clone().startOf('day');
+  const endSearchDay = currentDay.clone().add(1, 'week').endOf('week'); // Rechercher sur une semaine complète
+
+  // Parcourir les jours jusqu'à ce que des créneaux de disponibilité soient trouvés
+  while (availability.length === 0 && currentDay.isSameOrBefore(endSearchDay)) {
+    const dayOfWeek = currentDay.format("dddd");
     const daySchedule = technician.openingHours.find(
       (schedule) => schedule.day === dayOfWeek
     );
+
 
     if (daySchedule) {
       daySchedule.slots.forEach((slot: { start: Date; end: Date }) => {
@@ -177,16 +175,18 @@ const calculateAvailableSlots = (technician: ITechnician) => {
         let end = moment(slot.end).tz("Europe/Paris");
 
         // Ajuster la date pour correspondre au jour de la semaine en cours
-        start.year(day.year()).month(day.month()).date(day.date());
-        end.year(day.year()).month(day.month()).date(day.date());
+        start.year(currentDay.year()).month(currentDay.month()).date(currentDay.date());
+        end.year(currentDay.year()).month(currentDay.month()).date(currentDay.date());
+
+    
 
         // Ne pas inclure les créneaux passés
         if (end.isAfter(now)) {
           while (start.isBefore(end)) {
             if (start.isAfter(now)) {
               availability.push({
-                start: start.format(),
-                end: start.clone().add(slotDuration, "minutes").format(),
+                start: start.clone().format(), // Convertir en chaîne de caractères
+                end: start.clone().add(slotDuration, "minutes").format(), // Convertir en chaîne de caractères
               });
             }
             start.add(slotDuration, "minutes");
@@ -194,12 +194,24 @@ const calculateAvailableSlots = (technician: ITechnician) => {
         }
       });
     }
+    
+    // Passer au jour suivant
+    currentDay.add(1, "day");
+    
   }
+
+  
 
   return availability;
 };
 
-export const getTechnicianAvailableSlots = async (technicianId: string) => {
+interface Slots {
+  day : String;
+  slots  : Slot[];
+};
+export const getTechnicianAvailableSlots = async (technicianId: string, week : number) => {
+  const we = week || 0;
+  
   const technician = await TechnicianModel.findById(technicianId).lean();
   if (!technician) throw new Error("Technician not found.");
 
@@ -215,12 +227,31 @@ export const getTechnicianAvailableSlots = async (technicianId: string) => {
     moment(repair.date).tz("Europe/Paris").format()
   );
 
-  const availableSlots = calculateAvailableSlots(technician).filter(
-    (slot) =>
-      !bookedDates.some((date) =>
-        moment(date).isBetween(moment(slot.start), moment(slot.end), null, "[)")
-      )
-  );
+  const getAvailabilityForDays = (days: number) => {
+    const allAvailableSlots: Slots[] = [];
+    let searchDate = now.clone();
+
+    for (let i = 0; i < days; i++) {
+      const dailyAvailableSlots = calculateAvailableSlots(technician,i,week).filter(
+        (slot) =>
+          !bookedDates.some((date) =>
+            moment(date).isBetween(moment(slot.start), moment(slot.end), null, "[)")
+          )
+      );
+      allAvailableSlots.push({
+        day : moment(dailyAvailableSlots[0].start).tz("Europe/Paris").format('dddd'),
+        slots : dailyAvailableSlots,
+      }
+      );
+      //allAvailableSlots.slots.push(...dailyAvailableSlots);
+      searchDate.add(1, "day");
+
+    }
+
+    return allAvailableSlots;
+  };
+
+  const availableSlots = getAvailabilityForDays(6); // Pour obtenir les disponibilités sur 5 jours
 
   return availableSlots;
 };

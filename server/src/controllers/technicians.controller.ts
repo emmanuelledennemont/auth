@@ -284,8 +284,10 @@ export const getTechnicianAvailabilityController = async (
 ) => {
   try {
     const { technicianId } = req.params;
+    const week = req.query.week ? parseInt(req.query.week as string) : 0;
+    console.log("week controler: " + week);
 
-    const slots = await getTechnicianAvailableSlots(technicianId);
+    const slots = await getTechnicianAvailableSlots(technicianId,week);
     return res.status(200).json(slots);
   } catch (error) {
     console.error("Error retrieving technician availability:", error);
