@@ -10,6 +10,7 @@ dotenv.config();
 export const getAllTechnicians = () => {
   return TechnicianModel.find()
     .select("-authentication -__v -__t")
+    .populate("categories")
     .then((technicians) =>
       technicians.map((technician) => technician.toObject())
     );

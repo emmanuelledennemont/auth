@@ -8,6 +8,8 @@ import {
   updateCategory,
 } from "@/services/category.service";
 
+import { createSubCategory } from "@/services/sub-category.service";
+
 export const getCategoriesController = async (req: Request, res: Response) => {
   try {
     const categories = await getAllCategories();
@@ -70,5 +72,23 @@ export const deleteCategoryController = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error deleting category:", error);
     res.status(500).json({ message: "Failed to delete category." });
+  }
+};
+
+export const createSubCategoryController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { parentId } = req.params;
+    const subCategory = await createSubCategory(parentId, req.body);
+    res.status(201).json(subCategory);
+  } catch (error: any) {
+    console.error("Error creating subcategory:", error);
+    if (error.message === "Parent category not found") {
+      res.status(404).json({ message: "Parent category not found." });
+    } else {
+      res.status(500).json({ message: "Failed to create subcategory." });
+    }
   }
 };

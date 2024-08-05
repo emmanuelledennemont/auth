@@ -1,5 +1,6 @@
 import {
   createCategoryController,
+  createSubCategoryController,
   deleteCategoryController,
   getCategoriesController,
   getCategoryByIdController,
@@ -13,6 +14,11 @@ export default (router: express.Router) => {
   router.get("/categories/:id", getCategoryByIdController);
   router.patch("/categories/:id", updateCategoryController);
   router.delete("/categories/:id", deleteCategoryController);
+
+  router.post(
+    "/categories/:parentId/subcategories",
+    createSubCategoryController
+  );
 
   return router;
 };

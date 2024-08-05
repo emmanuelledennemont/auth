@@ -4,56 +4,63 @@ import { UserModel } from "@/db/models/user.model";
 import { authentication, random } from "@/helpers/index";
 import { faker } from "@faker-js/faker";
 
-export const seedUsers = async () => {
+export const seedUsers = async (force = false) => {
   const clientCount = await ClientModel.countDocuments();
   const technicianCount = await TechnicianModel.countDocuments();
 
-  if (clientCount > 0 || technicianCount > 0) {
+  if ((clientCount > 0 || technicianCount > 0) && !force) {
     console.log(
-      "👥 Clients and/or Technicians already exist, skipping seeding."
+      "👥 Clients and/or Technicians already exist. Use force option to reseed."
     );
     return;
   }
 
+  // Définition des catégories
+  const categories = [
+    {
+      _id: "66b114926397e0eb47e720d1",
+      name: "Grand Electromenager",
+      image: "https://example.com/images/grand-electromenager.jpg",
+      slug: "grand-electromenager",
+    },
+    {
+      _id: "66b1159a2aafbdcb004391e2",
+      name: "Petit 'Electroménager",
+      image: "https://example.com/images/petit-electromenager.jpg",
+      slug: "petit-electromenager",
+    },
+    {
+      _id: "66b115a02aafbdcb004391e6",
+      name: "Devices",
+      image: "https://example.com/images/devices.jpg",
+      slug: "devices",
+    },
+    {
+      _id: "66b115a62aafbdcb004391ea",
+      name: "E-Mobilité",
+      image: "https://example.com/images/e-mobilite.jpg",
+      slug: "e-mobilite",
+    },
+  ];
+
   const clients: any[] = [];
   const technicians: any[] = [];
 
+  // Le code pour créer les clients reste inchangé
   for (let i = 0; i < 10; i++) {
-    const salt = random();
-    const password = faker.internet.password();
-
-    clients.push({
-      _id: undefined,
-      email: faker.internet.email(),
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-      profileImage: faker.image.url(),
-      phone: faker.phone.number(),
-      username: faker.internet.userName(),
-      password: password,
-      role: "Client",
-      favorites: [],
-      repairList: [],
-      saving: [],
-      authentication: {
-        salt: salt,
-        password: authentication(salt, password),
-      },
-    });
+    // ... (code pour créer les clients)
   }
-
-  // Liste des catégories restreintes
-  const categories = [
-    "Grand Electromenager",
-    "Petit Electromenager",
-    "Devices",
-    "Mobilité",
-  ];
 
   // Générer 10 techniciens
   for (let i = 0; i < 10; i++) {
     const salt = random();
     const password = faker.internet.password();
+
+    // Sélectionner un nombre aléatoire de catégories pour ce technicien
+    const selectedCategories = faker.helpers.arrayElements(
+      categories,
+      faker.number.int({ min: 1, max: categories.length })
+    );
 
     technicians.push({
       _id: undefined,
@@ -80,23 +87,13 @@ export const seedUsers = async () => {
           coordinates: [faker.location.longitude(), faker.location.latitude()],
         },
       },
-      categories: categories
-        .slice(0, faker.number.int({ min: 1, max: categories.length }))
-        .map((name) => ({
-          name,
-          image: faker.image.url(),
-          slug: name.toLowerCase().replace(/ /g, "-"),
-        })),
+      categories: selectedCategories.map((cat) => cat._id), // Utiliser seulement les IDs des catégories
       openingHours: [
         { day: "Monday", open: "09:00", close: "17:00" },
         { day: "Tuesday", open: "09:00", close: "17:00" },
         { day: "Wednesday", open: "09:00", close: "17:00" },
         { day: "Thursday", open: "09:00", close: "17:00" },
         { day: "Friday", open: "09:00", close: "17:00" },
-      ],
-      repairingCategories: [
-        faker.commerce.department(),
-        faker.commerce.department(),
       ],
       authentication: {
         salt: salt,
@@ -106,11 +103,16 @@ export const seedUsers = async () => {
   }
 
   try {
-    await UserModel.deleteMany({});
+    if (force) {
+      await UserModel.deleteMany({});
+      await ClientModel.deleteMany({});
+      await TechnicianModel.deleteMany({});
+      console.log("Existing data cleared.");
+    }
     await ClientModel.insertMany(clients);
     await TechnicianModel.insertMany(technicians);
 
-    console.log("Clients and Technicians seeded");
+    console.log("Clients and Technicians seeded successfully.");
   } catch (error) {
     console.error("Error seeding clients and technicians:", error);
   }

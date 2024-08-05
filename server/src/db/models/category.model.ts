@@ -3,6 +3,6 @@ import { Model, model } from "mongoose";
 import { CategorySchema } from "../schemas/category.schema";
 
 export const CategoryModel: Model<ICategory> = model<ICategory>(
-  "Category",
+  "Categories",
   CategorySchema
 );

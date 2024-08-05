@@ -1,6 +1,5 @@
 import { Schema } from "mongoose";
 import { AddressSchema } from "./address.schema";
-import { CategorySchema } from "./category.schema";
 
 // Générer les créneaux horaires valides
 const DayScheduleSchema = new Schema({
@@ -18,7 +17,7 @@ export const TechnicianSchema: Schema = new Schema({
   bio: { type: String },
   sirene: { type: String, required: false },
   address: { type: AddressSchema },
-  categories: [{ type: CategorySchema }],
+  categories: [{ type: Schema.Types.ObjectId, ref: "Categories" }],
   openingHours: [DayScheduleSchema],
   slotDuration: { type: Number, default: 15 },
   rating: {
