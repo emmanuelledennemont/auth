@@ -150,16 +150,23 @@ export const getTechnicianByFilters = (
 interface Slot {
   start: string;
   end: string;
-};
-const calculateAvailableSlots = (technician: ITechnician, day : Number, week : Number ) => {
+}
+const calculateAvailableSlots = (
+  technician: ITechnician,
+  day: Number,
+  week: Number
+) => {
   const availability: Slot[] = [];
- 
-  const now = moment().tz("Europe/Paris").add( day.valueOf(), 'day').add(week.valueOf(), 'week');
+
+  const now = moment()
+    .tz("Europe/Paris")
+    .add(day.valueOf(), "day")
+    .add(week.valueOf(), "week");
   const slotDuration = technician.slotDuration || 30;
 
   // Définir une date de départ à aujourd'hui
-  let currentDay = now.clone().startOf('day');
-  const endSearchDay = currentDay.clone().add(1, 'week').endOf('week'); // Rechercher sur une semaine complète
+  let currentDay = now.clone().startOf("day");
+  const endSearchDay = currentDay.clone().add(1, "week").endOf("week"); // Rechercher sur une semaine complète
 
   // Parcourir les jours jusqu'à ce que des créneaux de disponibilité soient trouvés
   while (availability.length === 0 && currentDay.isSameOrBefore(endSearchDay)) {
@@ -168,17 +175,20 @@ const calculateAvailableSlots = (technician: ITechnician, day : Number, week : N
       (schedule) => schedule.day === dayOfWeek
     );
 
-
     if (daySchedule) {
       daySchedule.slots.forEach((slot: { start: Date; end: Date }) => {
         let start = moment(slot.start).tz("Europe/Paris");
         let end = moment(slot.end).tz("Europe/Paris");
 
         // Ajuster la date pour correspondre au jour de la semaine en cours
-        start.year(currentDay.year()).month(currentDay.month()).date(currentDay.date());
-        end.year(currentDay.year()).month(currentDay.month()).date(currentDay.date());
-
-    
+        start
+          .year(currentDay.year())
+          .month(currentDay.month())
+          .date(currentDay.date());
+        end
+          .year(currentDay.year())
+          .month(currentDay.month())
+          .date(currentDay.date());
 
         // Ne pas inclure les créneaux passés
         if (end.isAfter(now)) {
@@ -194,24 +204,24 @@ const calculateAvailableSlots = (technician: ITechnician, day : Number, week : N
         }
       });
     }
-    
+
     // Passer au jour suivant
     currentDay.add(1, "day");
-    
   }
-
-  
 
   return availability;
 };
 
 interface Slots {
-  day : String;
-  slots  : Slot[];
-};
-export const getTechnicianAvailableSlots = async (technicianId: string, week : number) => {
+  day: String;
+  slots: Slot[];
+}
+export const getTechnicianAvailableSlots = async (
+  technicianId: string,
+  week: number
+) => {
   const we = week || 0;
-  
+
   const technician = await TechnicianModel.findById(technicianId).lean();
   if (!technician) throw new Error("Technician not found.");
 
@@ -232,20 +242,29 @@ export const getTechnicianAvailableSlots = async (technicianId: string, week : n
     let searchDate = now.clone();
 
     for (let i = 0; i < days; i++) {
-      const dailyAvailableSlots = calculateAvailableSlots(technician,i,week).filter(
+      const dailyAvailableSlots = calculateAvailableSlots(
+        technician,
+        i,
+        week
+      ).filter(
         (slot) =>
           !bookedDates.some((date) =>
-            moment(date).isBetween(moment(slot.start), moment(slot.end), null, "[)")
+            moment(date).isBetween(
+              moment(slot.start),
+              moment(slot.end),
+              null,
+              "[)"
+            )
           )
       );
       allAvailableSlots.push({
-        day : moment(dailyAvailableSlots[0].start).tz("Europe/Paris").format('dddd'),
-        slots : dailyAvailableSlots,
-      }
-      );
+        day: moment(dailyAvailableSlots[0].start)
+          .tz("Europe/Paris")
+          .format("dddd"),
+        slots: dailyAvailableSlots,
+      });
       //allAvailableSlots.slots.push(...dailyAvailableSlots);
       searchDate.add(1, "day");
-
     }
 
     return allAvailableSlots;

@@ -1,9 +1,7 @@
-import { Model } from "mongoose";
 import { ITechnician } from "@/types/user.type";
-import { UserModel } from "./user.model";
+import { Model } from "mongoose";
 import { TechnicianSchema } from "../schemas/technician.schema";
+import { UserModel } from "./user.model";
 
 export const TechnicianModel: Model<ITechnician> =
   UserModel.discriminator<ITechnician>("Technician", TechnicianSchema);
-
-  
