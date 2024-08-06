@@ -19,10 +19,20 @@ export const TechnicianSchema: Schema = new Schema({
   address: { type: AddressSchema },
   categories: [
     {
-      category: { type: Schema.Types.ObjectId, ref: "Categories" },
-      subCategories: [{ type: Schema.Types.ObjectId, ref: "SubCategories" }],
+      _id: { type: Schema.Types.ObjectId, ref: "Categories" },
+      name: String,
+      image: String,
+      slug: String,
+      subCategories: [
+        {
+          _id: { type: Schema.Types.ObjectId, ref: "SubCategories" },
+          name: String,
+          slug: String,
+        },
+      ],
     },
   ],
+
   openingHours: [DayScheduleSchema],
   slotDuration: { type: Number, default: 15 },
   rating: {

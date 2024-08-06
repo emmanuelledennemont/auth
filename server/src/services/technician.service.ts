@@ -10,7 +10,6 @@ dotenv.config();
 export const getAllTechnicians = () => {
   return TechnicianModel.find()
     .select("-authentication -__v -__t")
-    .populate("categories")
     .then((technicians) =>
       technicians.map((technician) => technician.toObject())
     );
@@ -19,15 +18,16 @@ export const getAllTechnicians = () => {
 export const getTechnician = (id: string) => {
   return TechnicianModel.findById(id)
     .select("-authentication -__v -__t")
-    .populate({
-      path: "categories.category",
-      select: "name image slug",
+    .then((technician) => {
+      if (!technician) {
+        throw new Error("Technician not found");
+      }
+      return technician.toObject();
     })
-    .populate({
-      path: "categories.subCategories",
-      select: "name slug",
-    })
-    .then((technician) => technician?.toObject());
+    .catch((error) => {
+      console.error("Error fetching technician:", error);
+      throw error;
+    });
 };
 
 export const getTechniciansByCategory = (categoryId: string) => {
@@ -66,6 +66,25 @@ export const updateTechnician = (id: string, values: Record<string, any>) => {
   return TechnicianModel.findByIdAndUpdate(id, values, { new: true })
     .select("-authentication -__v -__t")
     .populate("categories")
+    .then((technician) => technician?.toObject());
+};
+
+export const updateTechnicianCategories = (
+  technicianId: string,
+  categoriesData: any
+) => {
+  return TechnicianModel.findByIdAndUpdate(
+    technicianId,
+    { $set: { categories: categoriesData.categories } },
+    { new: true }
+  )
+    .populate({
+      path: "categories",
+      populate: {
+        path: "subCategories",
+        model: "SubCategories",
+      },
+    })
     .then((technician) => technician?.toObject());
 };
 

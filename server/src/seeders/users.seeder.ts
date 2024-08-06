@@ -22,24 +22,45 @@ export const seedUsers = async (force = false) => {
       name: "Grand Electromenager",
       image: "https://example.com/images/grand-electromenager.jpg",
       slug: "grand-electromenager",
+      subCategories: [
+        {
+          _id: "66b11b9a0b8e5a5d51d08f47",
+          name: "Lave-Linge",
+          slug: "lave-linge",
+        },
+        {
+          _id: "66b2555695a5d33cd2a899bf",
+          name: "Lave-Vaisselle",
+          slug: "lave-vaisselle",
+        },
+        { _id: "66b2556495a5d33cd2a899c8", name: "Frigo", slug: "frigo" },
+        {
+          _id: "66b2556f95a5d33cd2a899d2",
+          name: "Congélateur",
+          slug: "congelateur",
+        },
+      ],
     },
     {
       _id: "66b1159a2aafbdcb004391e2",
-      name: "Petit 'Electroménager",
+      name: "Petit Electroménager",
       image: "https://example.com/images/petit-electromenager.jpg",
       slug: "petit-electromenager",
+      subCategories: [],
     },
     {
       _id: "66b115a02aafbdcb004391e6",
       name: "Devices",
       image: "https://example.com/images/devices.jpg",
       slug: "devices",
+      subCategories: [],
     },
     {
       _id: "66b115a62aafbdcb004391ea",
       name: "E-Mobilité",
       image: "https://example.com/images/e-mobilite.jpg",
       slug: "e-mobilite",
+      subCategories: [],
     },
   ];
 
@@ -61,6 +82,29 @@ export const seedUsers = async (force = false) => {
       categories,
       faker.number.int({ min: 1, max: categories.length })
     );
+
+    // Créer la structure de catégories pour le technicien avec des sous-catégories aléatoires
+    const technicianCategories = selectedCategories.map((category) => {
+      const selectedSubCategories =
+        category.subCategories.length > 0
+          ? faker.helpers.arrayElements(
+              category.subCategories,
+              faker.number.int({ min: 0, max: category.subCategories.length })
+            )
+          : [];
+
+      return {
+        _id: category._id,
+        name: category.name,
+        image: category.image,
+        slug: category.slug,
+        subCategories: selectedSubCategories.map((subCat) => ({
+          _id: subCat._id,
+          name: subCat.name,
+          slug: subCat.slug,
+        })),
+      };
+    });
 
     technicians.push({
       _id: undefined,
@@ -87,7 +131,7 @@ export const seedUsers = async (force = false) => {
           coordinates: [faker.location.longitude(), faker.location.latitude()],
         },
       },
-      categories: selectedCategories.map((cat) => cat._id), // Utiliser seulement les IDs des catégories
+      categories: technicianCategories,
       openingHours: [
         {
           day: "Monday",
