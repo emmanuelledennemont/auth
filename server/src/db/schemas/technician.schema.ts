@@ -17,7 +17,12 @@ export const TechnicianSchema: Schema = new Schema({
   bio: { type: String },
   sirene: { type: String, required: false },
   address: { type: AddressSchema },
-  categories: [{ type: Schema.Types.ObjectId, ref: "Categories" }],
+  categories: [
+    {
+      category: { type: Schema.Types.ObjectId, ref: "Categories" },
+      subCategories: [{ type: Schema.Types.ObjectId, ref: "SubCategories" }],
+    },
+  ],
   openingHours: [DayScheduleSchema],
   slotDuration: { type: Number, default: 15 },
   rating: {

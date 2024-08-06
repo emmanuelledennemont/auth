@@ -89,11 +89,71 @@ export const seedUsers = async (force = false) => {
       },
       categories: selectedCategories.map((cat) => cat._id), // Utiliser seulement les IDs des catégories
       openingHours: [
-        { day: "Monday", open: "09:00", close: "17:00" },
-        { day: "Tuesday", open: "09:00", close: "17:00" },
-        { day: "Wednesday", open: "09:00", close: "17:00" },
-        { day: "Thursday", open: "09:00", close: "17:00" },
-        { day: "Friday", open: "09:00", close: "17:00" },
+        {
+          day: "Monday",
+          slots: [
+            {
+              start: "2024-08-05T09:00:00+02:00",
+              end: "2024-08-05T12:00:00+02:00",
+            },
+            {
+              start: "2024-08-05T14:00:00+02:00",
+              end: "2024-08-05T18:00:00+02:00",
+            },
+          ],
+        },
+        {
+          day: "Tuesday",
+          slots: [
+            {
+              start: "2024-08-06T09:00:00+02:00",
+              end: "2024-08-06T12:00:00+02:00",
+            },
+            {
+              start: "2024-08-06T14:00:00+02:00",
+              end: "2024-08-06T18:00:00+02:00",
+            },
+          ],
+        },
+        {
+          day: "Wednesday",
+          slots: [
+            {
+              start: "2024-08-07T09:00:00+02:00",
+              end: "2024-08-07T12:00:00+02:00",
+            },
+            {
+              start: "2024-08-07T14:00:00+02:00",
+              end: "2024-08-07T18:00:00+02:00",
+            },
+          ],
+        },
+        {
+          day: "Thursday",
+          slots: [
+            {
+              start: "2024-08-08T09:00:00+02:00",
+              end: "2024-08-08T12:00:00+02:00",
+            },
+            {
+              start: "2024-08-08T14:00:00+02:00",
+              end: "2024-08-08T18:00:00+02:00",
+            },
+          ],
+        },
+        {
+          day: "Friday",
+          slots: [
+            {
+              start: "2024-08-09T09:00:00+02:00",
+              end: "2024-08-09T12:00:00+02:00",
+            },
+            {
+              start: "2024-08-09T14:00:00+02:00",
+              end: "2024-08-09T18:00:00+02:00",
+            },
+          ],
+        },
       ],
       authentication: {
         salt: salt,

@@ -19,7 +19,41 @@ export const getAllTechnicians = () => {
 export const getTechnician = (id: string) => {
   return TechnicianModel.findById(id)
     .select("-authentication -__v -__t")
+    .populate({
+      path: "categories.category",
+      select: "name image slug",
+    })
+    .populate({
+      path: "categories.subCategories",
+      select: "name slug",
+    })
     .then((technician) => technician?.toObject());
+};
+
+export const getTechniciansByCategory = (categoryId: string) => {
+  return TechnicianModel.find({ "categories.category": categoryId })
+    .select("-authentication -__v -__t")
+    .populate({
+      path: "categories.category",
+      populate: { path: "sub_categories" },
+    })
+    .populate("categories.subCategories")
+    .then((technicians) =>
+      technicians.map((technician) => technician.toObject())
+    );
+};
+
+export const getTechniciansBySubCategory = (subCategoryId: string) => {
+  return TechnicianModel.find({ "categories.subCategories": subCategoryId })
+    .select("-authentication -__v -__t")
+    .populate({
+      path: "categories.category",
+      populate: { path: "sub_categories" },
+    })
+    .populate("categories.subCategories")
+    .then((technicians) =>
+      technicians.map((technician) => technician.toObject())
+    );
 };
 
 export const createUserWithTechnicianRole = (values: Record<string, any>) => {
@@ -31,6 +65,7 @@ export const createUserWithTechnicianRole = (values: Record<string, any>) => {
 export const updateTechnician = (id: string, values: Record<string, any>) => {
   return TechnicianModel.findByIdAndUpdate(id, values, { new: true })
     .select("-authentication -__v -__t")
+    .populate("categories")
     .then((technician) => technician?.toObject());
 };
 
@@ -159,10 +194,21 @@ const calculateAvailableSlots = (
 ) => {
   const availability: Slot[] = [];
 
-  const now = moment()
-    .tz("Europe/Paris")
-    .add(day.valueOf(), "day")
-    .add(week.valueOf(), "week");
+  let now;
+
+  if (week === 0) {
+    now = moment()
+      .tz("Europe/Paris")
+      .add(day.valueOf(), "day")
+      .add(week.valueOf(), "week");
+  } else {
+    now = moment()
+      .tz("Europe/Paris")
+      .add(day.valueOf(), "day")
+      .add(week.valueOf(), "week")
+      .startOf("day");
+  }
+
   const slotDuration = technician.slotDuration || 30;
 
   // Définir une date de départ à aujourd'hui

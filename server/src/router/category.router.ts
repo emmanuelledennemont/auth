@@ -6,6 +6,7 @@ import {
   getCategoryByIdController,
   updateCategoryController,
 } from "@/controllers/category.controller";
+
 import express from "express";
 
 export default (router: express.Router) => {
