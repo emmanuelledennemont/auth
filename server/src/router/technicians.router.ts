@@ -7,7 +7,8 @@ import {
   getTechnicianRatingsController,
   getTechniciansByCityController,
   updateTechnicianController,
-  getTechnicianRepairController
+  getTechnicianRepairController, 
+  getTechnicianAvailabilityController
 } from "@/controllers/technicians.controller";
 
 import express from "express";
@@ -25,6 +26,7 @@ export default (router: express.Router) => {
     "/technicians/:technicianId/repair",
     getTechnicianRepairController
   );
+  router.get('/technicians/:technicianId/availability', getTechnicianAvailabilityController);
   
   router.get("/technicians/byCity", getTechniciansByCityController);
   router.get("/technicians/:id", getTechnicianController);

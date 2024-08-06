@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 const server = http.createServer(app);
 
 const MONGO_URL = process.env.MONGO_CONNECTION_STRING || "";
-
+const PORT = process.env.PORT || 3000;
 mongoose.Promise = Promise;
 
 mongoose
@@ -41,8 +41,8 @@ mongoose
     // Appeler la fonction de seed après la connexion à MongoDB
     await seedUsers();
 
-    server.listen(3000, () => {
-      console.log("🚀 Server is running on http://localhost:3001 🚀");
+    server.listen(PORT, () => {
+      console.log("🚀 Server is running on http://localhost:" + PORT);
     });
   })
   .catch((error) => {

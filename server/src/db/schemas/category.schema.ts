@@ -1,20 +1,14 @@
 import { Schema } from "mongoose";
+import { SubCategorySchema } from "./sub-category.schema";
 
-export const CategorySchema: Schema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      enum: [
-        "Grand Electromenager",
-        "Petit Electromenager",
-        "Devices",
-        "Mobilité",
-      ],
-    },
-    image: { type: String, required: true },
-    slug: { type: String, required: true },
-    sub_categories: [{ type: Schema.Types.ObjectId, ref: "Category" }],
+export const CategorySchema: Schema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
   },
-  { _id: false }
-);
+  image: { type: String, required: true },
+  slug: { type: String, required: true },
+  sub_categories: [{ type: SubCategorySchema, ref: "Categories" }],
+});
