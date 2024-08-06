@@ -1,18 +1,10 @@
 import { Request, Response } from "express";
 
-import {
-  createCategory,
-  deleteCategory,
-  getAllCategories,
-  getCategory,
-  updateCategory,
-} from "@/services/category.service";
+import { Category, SubCategory } from "@/services";
 
-import { createSubCategory } from "@/services/sub-category.service";
-
-export const getCategoriesController = async (req: Request, res: Response) => {
+const getCategoriesController = async (req: Request, res: Response) => {
   try {
-    const categories = await getAllCategories();
+    const categories = await Category.getAll();
     res.json(categories);
   } catch (error) {
     console.error("Error getting categories:", error);
@@ -20,12 +12,9 @@ export const getCategoriesController = async (req: Request, res: Response) => {
   }
 };
 
-export const getCategoryByIdController = async (
-  req: Request,
-  res: Response
-) => {
+const getCategoryByIdController = async (req: Request, res: Response) => {
   try {
-    const category = await getCategory(req.params.id);
+    const category = await Category.get(req.params.id);
     if (category) {
       res.json(category);
     } else {
@@ -37,9 +26,9 @@ export const getCategoryByIdController = async (
   }
 };
 
-export const createCategoryController = async (req: Request, res: Response) => {
+const createCategoryController = async (req: Request, res: Response) => {
   try {
-    const category = await createCategory(req.body);
+    const category = await Category.create(req.body);
     res.json(category);
   } catch (error) {
     console.error("Error creating category:", error);
@@ -47,9 +36,9 @@ export const createCategoryController = async (req: Request, res: Response) => {
   }
 };
 
-export const updateCategoryController = async (req: Request, res: Response) => {
+const updateCategoryController = async (req: Request, res: Response) => {
   try {
-    const category = await updateCategory(req.params.id, req.body);
+    const category = await Category.update(req.params.id, req.body);
     if (category) {
       res.json(category);
     } else {
@@ -61,9 +50,9 @@ export const updateCategoryController = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteCategoryController = async (req: Request, res: Response) => {
+const deleteCategoryController = async (req: Request, res: Response) => {
   try {
-    const category = await deleteCategory(req.params.id);
+    const category = await Category.remove(req.params.id);
     if (category) {
       res.json(category);
     } else {
@@ -75,13 +64,10 @@ export const deleteCategoryController = async (req: Request, res: Response) => {
   }
 };
 
-export const createSubCategoryController = async (
-  req: Request,
-  res: Response
-) => {
+const createSubCategoryController = async (req: Request, res: Response) => {
   try {
     const { parentId } = req.params;
-    const subCategory = await createSubCategory(parentId, req.body);
+    const subCategory = await SubCategory.create(parentId, req.body);
     res.status(201).json(subCategory);
   } catch (error: any) {
     console.error("Error creating subcategory:", error);
@@ -91,4 +77,13 @@ export const createSubCategoryController = async (
       res.status(500).json({ message: "Failed to create subcategory." });
     }
   }
+};
+
+export default {
+  createCategoryController,
+  createSubCategoryController,
+  deleteCategoryController,
+  getCategoriesController,
+  getCategoryByIdController,
+  updateCategoryController,
 };

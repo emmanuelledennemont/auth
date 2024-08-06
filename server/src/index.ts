@@ -54,4 +54,4 @@ mongoose.connection.on("error", (error) =>
   console.error("MongoDB error:", error)
 );
 
-app.use("/", router());
+app.use("/api/v1", router());

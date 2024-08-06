@@ -1,17 +1,9 @@
-import {
-  deleteUserById,
-  getUserByEmail,
-  getUserById,
-  getUsers,
-} from "@/services/user.service";
+import { User } from "@/services";
 import express from "express";
 
-export const getAllUsers = async (
-  req: express.Request,
-  res: express.Response
-) => {
+const getAllUsers = async (req: express.Request, res: express.Response) => {
   try {
-    const users = await getUsers();
+    const users = await User.getUsers();
     return res.status(200).json(users);
   } catch (error) {
     console.log(error);
@@ -19,10 +11,10 @@ export const getAllUsers = async (
   }
 };
 
-export const getUser = async (req: express.Request, res: express.Response) => {
+const getUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
-    const user = await getUserById(id);
+    const user = await User.getUserById(id);
     return res.status(200).json(user);
   } catch (error) {
     console.log(error);
@@ -30,13 +22,10 @@ export const getUser = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export const deleteUser = async (
-  req: express.Request,
-  res: express.Response
-) => {
+const deleteUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
-    const deletedUser = await deleteUserById(id);
+    const deletedUser = await User.deleteUserById(id);
     return res.status(200).json(deletedUser);
   } catch (error) {
     console.log(error);
@@ -44,10 +33,7 @@ export const deleteUser = async (
   }
 };
 
-export const updateUser = async (
-  req: express.Request,
-  res: express.Response
-) => {
+const updateUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
     const { username } = req.body;
@@ -56,7 +42,7 @@ export const updateUser = async (
       return res.sendStatus(400);
     }
 
-    const user = await getUserById(id);
+    const user = await User.getUserById(id);
 
     if (!user) {
       return res.sendStatus(404);
@@ -72,17 +58,22 @@ export const updateUser = async (
   }
 };
 
-export const findUserByEmail = async (
-  req: express.Request,
-  res: express.Response
-) => {
+const findUserByEmail = async (req: express.Request, res: express.Response) => {
   try {
     const { email } = req.params;
-    const user = await getUserByEmail(email);
+    const user = await User.getUserByEmail(email);
 
     return res.status(200).json({ exists: user !== null });
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
   }
+};
+
+export default {
+  getAllUsers,
+  getUser,
+  deleteUser,
+  updateUser,
+  findUserByEmail,
 };

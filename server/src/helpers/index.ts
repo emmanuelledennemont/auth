@@ -1,14 +1,7 @@
-import crypto from "crypto";
-import dotenv from "dotenv";
+import avaibilityHelper from "./avaibility.helper";
+import cryptoHelper from "./crypto.helper";
+import roleHelper from "./role.helper";
 
-dotenv.config();
-
-const SECRET = process.env.SECRET_KEY || "";
-
-export const random = () => crypto.randomBytes(128).toString("base64");
-export const authentication = (salt: string, password: string) => {
-  return crypto
-    .createHmac("sha256", [salt, password].join("/"))
-    .update(SECRET)
-    .digest("hex");
-};
+export const avaibility = avaibilityHelper;
+export const crypto = cryptoHelper;
+export const role = roleHelper;

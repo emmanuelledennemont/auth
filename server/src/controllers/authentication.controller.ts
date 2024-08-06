@@ -1,8 +1,7 @@
-import { getUserByEmail, updateUserById } from "@/services/user.service";
-import { createRole } from "@/utils/createRole";
+import { crypto } from "@/helpers";
+import { User } from "@/services";
 import express from "express";
-import { authentication, random } from "../helpers";
-import { User } from "../types/user.type";
+import { User as UserType } from "../types/user.type";
 
 /*
   Example:
@@ -12,7 +11,7 @@ import { User } from "../types/user.type";
   }
 */
 
-export const login = async (req: express.Request, res: express.Response) => {
+const login = async (req: express.Request, res: express.Response) => {
   try {
     const { email, password } = req.body;
 
@@ -22,26 +21,29 @@ export const login = async (req: express.Request, res: express.Response) => {
         .json({ error: "Email and password are required." });
     }
 
-    const user = (await getUserByEmail(email)) as User | null;
+    const user = (await User.getUserByEmail(email)) as UserType | null;
 
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
 
-    const expectedHash = authentication(user.authentication.salt, password);
+    const expectedHash = crypto.authentication(
+      user.authentication.salt,
+      password
+    );
 
     if (user.authentication.password !== expectedHash) {
       return res.status(403).json({ error: "Invalid password." });
     }
 
-    const salt = random();
-    user.authentication.sessionToken = authentication(
+    const salt = crypto.random();
+    user.authentication.sessionToken = crypto.authentication(
       salt,
       user._id.toString()
     );
 
     // Update the user with the new session token
-    await updateUserById(user._id.toString(), {
+    await User.updateUserById(user._id.toString(), {
       "authentication.sessionToken": user.authentication.sessionToken,
     });
 
@@ -72,7 +74,7 @@ export const login = async (req: express.Request, res: express.Response) => {
   }
  */
 
-export const register = async (req: express.Request, res: express.Response) => {
+const register = async (req: express.Request, res: express.Response) => {
   try {
     const { email, password, username, role, firstname, lastname, phone } =
       req.body;
@@ -92,13 +94,13 @@ export const register = async (req: express.Request, res: express.Response) => {
       });
     }
 
-    const existingUser = await getUserByEmail(email);
+    const existingUser = await User.getUserByEmail(email);
 
     if (existingUser) {
       return res.status(409).json({ error: "Email is already in use." });
     }
 
-    const salt = random();
+    const salt = crypto.random();
     const user = {
       email,
       username,
@@ -108,11 +110,11 @@ export const register = async (req: express.Request, res: express.Response) => {
       role,
       authentication: {
         salt,
-        password: authentication(salt, password),
+        password: crypto.authentication(salt, password),
       },
-    } as unknown as User;
+    } as unknown as UserType;
 
-    const createRoles = await createRole(user);
+    const createRoles = await role.create(user);
 
     if (!createRoles) {
       return res.status(500).json({ error: "Failed to create user role." });
@@ -123,4 +125,9 @@ export const register = async (req: express.Request, res: express.Response) => {
     console.log(error);
     return res.status(500).json({ error: "Internal server error." });
   }
+};
+
+export default {
+  login,
+  register,
 };

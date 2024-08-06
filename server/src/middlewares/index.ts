@@ -1,7 +1,7 @@
 import express from "express";
 import { get, merge } from "lodash";
 
-import { getUserBySessionToken } from "@/services/user.service";
+import { User } from "@/services";
 
 export const isAuthenticated = async (
   req: express.Request,
@@ -18,7 +18,7 @@ export const isAuthenticated = async (
         .json({ error: "Authentication token is missing." });
     }
 
-    const existingUser = await getUserBySessionToken(sessionToken);
+    const existingUser = await User.getUserBySessionToken(sessionToken);
 
     if (!existingUser) {
       console.log("Invalid authentication token.");

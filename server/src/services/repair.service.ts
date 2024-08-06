@@ -2,7 +2,7 @@ import { ClientModel } from "@/db/models/client.model";
 import { RepairModel } from "@/db/models/repair.model";
 import { TechnicianModel } from "@/db/models/technician.model";
 
-export const addRepair = async (values: Record<string, any>) => {
+const add = async (values: Record<string, any>) => {
   // Vérifiez si le technicien existe
   console.log(values.technician);
   const technician = await TechnicianModel.findById(values.technician);
@@ -20,7 +20,7 @@ export const addRepair = async (values: Record<string, any>) => {
   return new RepairModel(values).save().then((repair) => repair.toObject());
 };
 
-export const getTechnicianRepair = async (technicianId: string) => {
+const getTechnicianRepair = async (technicianId: string) => {
   // Vérifier si le technicien existe
   const technician = await TechnicianModel.findById(technicianId);
   if (!technician) {
@@ -42,7 +42,7 @@ export const getTechnicianRepair = async (technicianId: string) => {
   };
 };
 
-export const getClientRepair = async (clientId: string) => {
+const getByClient = async (clientId: string) => {
   // Vérifier si le technicien existe
   console.log(clientId);
   const client = await ClientModel.findById(clientId);
@@ -63,4 +63,10 @@ export const getClientRepair = async (clientId: string) => {
     repair,
     totalRepair,
   };
+};
+
+export default {
+  add,
+  getTechnicianRepair,
+  getByClient,
 };

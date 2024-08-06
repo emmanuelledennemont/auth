@@ -2,7 +2,7 @@ import { ClientModel } from "@/db/models/client.model";
 import { RatingModel } from "@/db/models/rating.model";
 import { TechnicianModel } from "@/db/models/technician.model";
 
-export const addRating = async (
+const add = async (
   rating: number,
   comment: string,
   clientId: string,
@@ -50,7 +50,7 @@ export const addRating = async (
   return newRating;
 };
 
-export const getTechnicianRatings = async (technicianId: string) => {
+const getTechnicianRatings = async (technicianId: string) => {
   // Vérifier si le technicien existe
   const technician = await TechnicianModel.findById(technicianId);
   if (!technician) {
@@ -74,4 +74,9 @@ export const getTechnicianRatings = async (technicianId: string) => {
     averageRating: parseFloat(averageRating.toFixed(2)), // Arrondir à deux décimales
     totalRatings,
   };
+};
+
+export default {
+  add,
+  getTechnicianRatings,
 };

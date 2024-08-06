@@ -1,22 +1,16 @@
 import { ClientModel } from "@/db/models/client.model";
 import { TechnicianModel } from "@/db/models/technician.model";
-import {
-  getAllClients,
-  getClient,
-  updateClient,
-} from "@/services/client.service";
-import { addRating } from "@/services/rating.service";
-import { addRepair, getClientRepair } from "@/services/repair.service";
+import { Client, Rating, Repair } from "@/services";
 
 import express from "express";
 import mongoose from "mongoose";
 
-export const getAllClientsController = async (
+const getAllClientsController = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    const clients = await getAllClients();
+    const clients = await Client.getAll();
     return res.status(200).json(clients);
   } catch (error) {
     console.error("Error retrieving clients:", error);
@@ -24,7 +18,7 @@ export const getAllClientsController = async (
   }
 };
 
-export const getClientController = async (
+const getClientController = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -36,7 +30,7 @@ export const getClientController = async (
       return res.status(400).json({ error: "Invalid Client ID." });
     }
 
-    const client = await getClient(clientId);
+    const client = await Client.get(clientId);
     if (!client) {
       console.error("Client not found:", clientId);
       return res.status(404).json({ error: "Client not found." });
@@ -48,7 +42,7 @@ export const getClientController = async (
   }
 };
 
-export const updateClientController = async (
+const updateClientController = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -60,7 +54,7 @@ export const updateClientController = async (
       return res.status(400).json({ error: "Invalid Client ID." });
     }
 
-    const client = await updateClient(clientId, req.body);
+    const client = await Client.update(clientId, req.body);
     if (!client) {
       console.error("Client not found:", clientId);
       return res.status(404).json({ error: "Client not found." });
@@ -75,7 +69,7 @@ export const updateClientController = async (
 // Controller pour ajouter un technicien aux favoris d'un client
 // Exemple: POST /clients/612f1f7f4f3b1e001f2e3b1f/favorites/612f1f7f4f3b1e001f2e3b1f
 
-export const addFavoriteTechnicianController = async (
+const addFavoriteTechnicianController = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -112,7 +106,7 @@ export const addFavoriteTechnicianController = async (
 // Controller pour supprimer un technicien des favoris d'un client
 // Exemple: DELETE /clients/612f1f7f4f3b1e001f2e3b1f/favorites/612f1f7f4f3b1e001f2e3b1f
 
-export const removeFavoriteTechnicianController = async (
+const removeFavoriteTechnicianController = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -149,14 +143,14 @@ export const removeFavoriteTechnicianController = async (
 //   "technicianId": "612f1f7f4f3b1e001f2e3b1f"
 // }
 
-export const addRatingController = async (
+const addRatingController = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
     const { rating, comment, clientId, technicianId } = req.body;
 
-    const newRating = await addRating(rating, comment, clientId, technicianId);
+    const newRating = await Rating.add(rating, comment, clientId, technicianId);
 
     return res.status(201).json(newRating);
   } catch (error: any) {
@@ -167,7 +161,7 @@ export const addRatingController = async (
   }
 };
 
-export const addNewReparation = async (
+const addNewReparation = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -184,7 +178,7 @@ export const addNewReparation = async (
       technician,
     };
 
-    const newReparation = await addRepair(reparation);
+    const newReparation = await Repair.add(reparation);
 
     return res.status(201).json(newReparation);
   } catch (error: any) {
@@ -195,7 +189,7 @@ export const addNewReparation = async (
   }
 };
 
-export const getClientRepairController = async (
+const getClientRepairController = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -203,7 +197,7 @@ export const getClientRepairController = async (
     const { clientId } = req.params;
     console.log(clientId);
 
-    const { repair, totalRepair } = await getClientRepair(clientId);
+    const { repair, totalRepair } = await Repair.getByClient(clientId);
 
     return res.status(200).json({
       repair,
@@ -215,4 +209,15 @@ export const getClientRepairController = async (
       error: (error as Error).message || "Failed to retrieve rapairs.",
     });
   }
+};
+
+export default {
+  getAllClientsController,
+  getClientController,
+  updateClientController,
+  addFavoriteTechnicianController,
+  removeFavoriteTechnicianController,
+  addRatingController,
+  addNewReparation,
+  getClientRepairController,
 };
