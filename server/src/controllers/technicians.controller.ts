@@ -9,7 +9,7 @@ const getTechniciansController = async (
   res: express.Response
 ) => {
   try {
-    const { id, latitude, longitude, city, categories, week } = req.query;
+    const { id, latitude, longitude, city, categories, week, categoryId, subCategoryId } = req.query;
 
     let filterOptions: any = {};
 
@@ -64,6 +64,20 @@ const getTechniciansController = async (
         });
       }
     }
+    if (categoryId) {
+      if (!mongoose.Types.ObjectId.isValid(categoryId as string)) {
+        return res.status(400).json({ error: "Invalid category ID." });
+      }
+      filterOptions.categoryId = categoryId;
+    }
+
+    if (subCategoryId) {
+      if (!mongoose.Types.ObjectId.isValid(subCategoryId as string)) {
+        return res.status(400).json({ error: "Invalid subCategory ID." });
+      }
+      filterOptions.subCategoryId = subCategoryId;
+    }
+    
 
     if (categories) {
       filterOptions.categories = (categories as string).split(",");

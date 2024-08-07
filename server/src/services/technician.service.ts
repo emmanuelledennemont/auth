@@ -96,11 +96,12 @@ const filterTechnicians = async (options: FilterOptions) => {
   }
 
   if (options.categoryId) {
-    query["categories.category"] = options.categoryId;
+    query["categories._id"] = options.categoryId;
+    console.log(query)
   }
 
   if (options.subCategoryId) {
-    query["categories.subCategories"] = options.subCategoryId;
+    query["categories.subCategories._id"] = options.subCategoryId;
   }
 
   if (options.latitude !== undefined && options.longitude !== undefined) {
