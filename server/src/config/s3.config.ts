@@ -1,7 +1,11 @@
-require("dotenv").config();
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { config } from "dotenv";
 
-const { GetObjectCommand, S3Client } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+// Charger les variables d'environnement depuis le fichier .env
+config({
+  path: "../../env",
+});
 
 export const s3Client = new S3Client({
   region: process.env.AWS_S3_REGION,
@@ -11,7 +15,7 @@ export const s3Client = new S3Client({
   },
 });
 
-async function getObjectUrl(key: string) {
+async function getObjectUrl(key: string): Promise<string> {
   const command = new GetObjectCommand({
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     Key: key,
@@ -22,7 +26,11 @@ async function getObjectUrl(key: string) {
 }
 
 const init = async () => {
-  console.log("get URL for logo.svg ", await getObjectUrl("logo.svg"));
+  try {
+    console.log("get URL for logo.svg ", await getObjectUrl("logo.svg"));
+  } catch (error) {
+    console.error("Error getting URL:", error);
+  }
 };
 
 // init();

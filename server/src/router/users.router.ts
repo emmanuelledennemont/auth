@@ -1,8 +1,9 @@
-import express from "express";
-
 import { Users } from "@/controllers";
-
+import express from "express";
+import multer from "multer";
 import { isAuthenticated, isOwner } from "../middlewares";
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 export default (router: express.Router) => {
   router.use(isAuthenticated);
@@ -11,7 +12,7 @@ export default (router: express.Router) => {
   router.get("/users/:id", isOwner, Users.getUser);
   router.get("/users/email/:email", Users.findUserByEmail);
   router.delete("/users/:id", isOwner, Users.deleteUser);
-  router.patch("/users/:id", isOwner, Users.updateUser);
+  router.patch("/users/:id", upload.single("profileImage"), Users.updateUser);
 
   return router;
 };

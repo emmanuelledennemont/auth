@@ -1,6 +1,6 @@
+import { Upload } from "@/helpers";
 import { User } from "@/services";
 import express from "express";
-
 const getAllUsers = async (req: express.Request, res: express.Response) => {
   try {
     const users = await User.getUsers();
@@ -10,7 +10,6 @@ const getAllUsers = async (req: express.Request, res: express.Response) => {
     return res.sendStatus(400);
   }
 };
-
 const getUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
@@ -21,7 +20,6 @@ const getUser = async (req: express.Request, res: express.Response) => {
     return res.sendStatus(400);
   }
 };
-
 const deleteUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
@@ -32,32 +30,40 @@ const deleteUser = async (req: express.Request, res: express.Response) => {
     return res.sendStatus(400);
   }
 };
-
 const updateUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
-    const { username } = req.body;
+    const updateData: Record<string, any> = req.body;
 
-    if (!username) {
-      return res.sendStatus(400);
+    console.log("Update request received for user:", id);
+    console.log("Update data:", updateData);
+    console.log("File:", req.file);
+
+    if (req.file) {
+      const uploadResult = await Upload.uploadImage(req.file, id);
+      console.log("Upload result:", uploadResult);
+      if (uploadResult.success && uploadResult.url) {
+        updateData.profileImage = uploadResult.url;
+      } else {
+        return res
+          .status(500)
+          .json({ error: "Failed to upload profile image" });
+      }
     }
 
-    const user = await User.getUserById(id);
+    const updatedUser = await User.updateUserById(id, updateData);
+    console.log("Updated user:", updatedUser);
 
-    if (!user) {
-      return res.sendStatus(404);
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    user.username = username;
-    await user.save();
-
-    return res.status(200).json(user).end();
+    return res.status(200).json(updatedUser);
   } catch (error) {
-    console.log(error);
-    return res.sendStatus(400);
+    console.error("Error updating user:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
-
 const findUserByEmail = async (req: express.Request, res: express.Response) => {
   try {
     const { email } = req.params;
