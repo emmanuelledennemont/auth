@@ -1,7 +1,7 @@
 import { ClientModel } from "@/db/models/client.model";
 import { TechnicianModel } from "@/db/models/technician.model";
 import { UserModel } from "@/db/models/user.model";
-import { crypto } from "@/helpers";
+import { Crypto } from "@/helpers";
 import { faker } from "@faker-js/faker";
 
 export const seedUsers = async (force = false) => {
@@ -74,7 +74,7 @@ export const seedUsers = async (force = false) => {
 
   // Générer 10 techniciens
   for (let i = 0; i < 10; i++) {
-    const salt = crypto.random();
+    const salt = Crypto.random();
     const password = faker.internet.password();
 
     // Sélectionner un nombre aléatoire de catégories pour ce technicien
@@ -201,7 +201,7 @@ export const seedUsers = async (force = false) => {
       ],
       authentication: {
         salt: salt,
-        password: crypto.authentication(salt, password),
+        password: Crypto.authentication(salt, password),
       },
     });
   }
