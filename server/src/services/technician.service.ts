@@ -1,5 +1,5 @@
 import { RepairModel } from "@/db/models/repair.model";
-import { avaibility } from "@/helpers";
+import { Avaibility } from "@/helpers";
 import { ITechnician } from "@/types/user.type";
 import axios from "axios";
 import dotenv from "dotenv";
@@ -254,20 +254,21 @@ const getAvailableSlots = async (
 
     if (!daySchedule) return null;
 
-    const dailyAvailableSlots = avaibility
-      .calculateAvailableSlots(technician as ITechnician, targetDay)
-      .filter(
-        (slot) =>
-          moment(slot.start).isAfter(currentDate) &&
-          !bookedDates.some((date) =>
-            moment(date).isBetween(
-              moment(slot.start),
-              moment(slot.end),
-              null,
-              "[)"
-            )
+    const dailyAvailableSlots = Avaibility.calculateAvailableSlots(
+      technician as ITechnician,
+      targetDay
+    ).filter(
+      (slot) =>
+        moment(slot.start).isAfter(currentDate) &&
+        !bookedDates.some((date) =>
+          moment(date).isBetween(
+            moment(slot.start),
+            moment(slot.end),
+            null,
+            "[)"
           )
-      );
+        )
+    );
 
     if (dailyAvailableSlots.length === 0) return null;
 

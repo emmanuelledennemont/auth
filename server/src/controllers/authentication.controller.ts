@@ -1,4 +1,4 @@
-import { crypto } from "@/helpers";
+import { Crypto } from "@/helpers";
 import { User } from "@/services";
 import express from "express";
 import { User as UserType } from "../types/user.type";
@@ -27,7 +27,7 @@ const login = async (req: express.Request, res: express.Response) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    const expectedHash = crypto.authentication(
+    const expectedHash = Crypto.authentication(
       user.authentication.salt,
       password
     );
@@ -36,8 +36,8 @@ const login = async (req: express.Request, res: express.Response) => {
       return res.status(403).json({ error: "Invalid password." });
     }
 
-    const salt = crypto.random();
-    user.authentication.sessionToken = crypto.authentication(
+    const salt = Crypto.random();
+    user.authentication.sessionToken = Crypto.authentication(
       salt,
       user._id.toString()
     );
@@ -100,7 +100,7 @@ const register = async (req: express.Request, res: express.Response) => {
       return res.status(409).json({ error: "Email is already in use." });
     }
 
-    const salt = crypto.random();
+    const salt = Crypto.random();
     const user = {
       email,
       username,
@@ -110,7 +110,7 @@ const register = async (req: express.Request, res: express.Response) => {
       role,
       authentication: {
         salt,
-        password: crypto.authentication(salt, password),
+        password: Crypto.authentication(salt, password),
       },
     } as unknown as UserType;
 
