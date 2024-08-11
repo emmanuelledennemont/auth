@@ -3,14 +3,18 @@
 import { Rating, Repair, Technician } from "@/services";
 import express from "express";
 import mongoose from "mongoose";
+import { getIdUser } from "@/middlewares";
 
+//import { is } from "middlewares"; 
 const getTechniciansController = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    const { id, latitude, longitude, city, categories, week, categoryId, subCategoryId } = req.query;
 
+    const { id, latitude, longitude, city, categories, week, categoryId, subCategoryId } = req.query;
+   
+   
     let filterOptions: any = {};
 
     if (id) {
@@ -93,12 +97,30 @@ const getTechniciansController = async (
 
     const technicians = await Technician.filterTechnicians(filterOptions);
 
-    if (id && technicians.length === 0) {
-      return res.status(404).json({ error: "Technician not found." });
-    }
+    // Filtrer les informations des techniciens
+    const userId =  await getIdUser(req);
 
-    console.log(`Found ${technicians.length} technicians`);
-    return res.status(200).json(technicians);
+    const filteredTechnicians = technicians.map((technician) => {
+
+      if ((userId).toString() !== technician._id.toString()) {
+        // Retourner seulement les informations non sensibles pour les autres 
+        return {
+          _id: technician._id,
+          mail : technician.email,
+          bio: technician.bio,
+        //  rating: technician.rating,
+          //categories: technician.categories,
+        //  openingHours: technician.openingHours,
+        };
+      } else {
+        return technician;
+        // Retourner toutes les informations pour le technicien lui-même ou les autres rôles (Client, Admin)
+        
+      }
+    });
+
+    console.log(`Found ${filteredTechnicians.length} technicians`);
+    return res.status(200).json(filteredTechnicians);
   } catch (error) {
     console.error("Error retrieving technicians:", error);
     return res.status(500).json({

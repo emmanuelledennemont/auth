@@ -2,7 +2,7 @@ import { Crypto } from "@/helpers";
 import { User } from "@/services";
 import express from "express";
 import { User as UserType } from "../types/user.type";
-
+import create from "../helpers/role.helper"
 /*
   Example:
   {
@@ -114,7 +114,7 @@ const register = async (req: express.Request, res: express.Response) => {
       },
     } as unknown as UserType;
 
-    const createRoles = await role.create(user);
+    const createRoles =  create(user);
 
     if (!createRoles) {
       return res.status(500).json({ error: "Failed to create user role." });

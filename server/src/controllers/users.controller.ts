@@ -1,6 +1,7 @@
 import { Upload } from "@/helpers";
 import { User } from "@/services";
 import express from "express";
+
 const getAllUsers = async (req: express.Request, res: express.Response) => {
   try {
     const users = await User.getUsers();

@@ -18,13 +18,14 @@ export const isAuthenticated = async (
         .json({ error: "Authentication token is missing." });
     }
 
-    const existingUser = await User.getUserBySessionToken(sessionToken);
+     const existingUser = await User.getUserBySessionToken(sessionToken);
+
 
     if (!existingUser) {
       console.log("Invalid authentication token.");
       return res.status(403).json({ error: "Invalid authentication token." });
     }
-
+    merge(req, { identity: existingUser });
     // console.log("Authenticated user:", existingUser);
 
     merge(req, { identity: existingUser });
@@ -64,3 +65,22 @@ export const isOwner = async (
     return res.sendStatus(400);
   }
 };
+
+export const getIdUser = async ( req: express.Request) => {
+  const sessionToken = get(req, "cookies.EMMANUELLE-AUTH"); 
+  const user = await User.getUserBySessionToken(sessionToken);
+  if (!user){
+    console.log("Error to find the user ID");
+    return "0"
+  }
+  else {
+    const id = user.id
+    if (!id) {
+       return " 0 "
+    }
+     else {
+      return user.id
+     }
+   
+  }
+}

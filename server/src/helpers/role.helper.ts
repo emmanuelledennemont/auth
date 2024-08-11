@@ -11,6 +11,4 @@ const create = async (values: Record<string, any>) => {
   }
 };
 
-export default {
-  create,
-};
+export default create ;
