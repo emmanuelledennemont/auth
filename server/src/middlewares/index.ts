@@ -66,21 +66,17 @@ export const isOwner = async (
   }
 };
 
-export const getIdUser = async ( req: express.Request) => {
-  const sessionToken = get(req, "cookies.EMMANUELLE-AUTH"); 
+export const getIdUser = async (req: express.Request) => {
+  const sessionToken = get(req, "cookies.EMMANUELLE-AUTH");
   const user = await User.getUserBySessionToken(sessionToken);
-  if (!user){
-    console.log("Error to find the user ID");
-    return "0"
-  }
-  else {
-    const id = user.id
-    if (!id) {
-       return " 0 "
-    }
-     else {
-      return user.id
-     }
-   
+  
+  if (!user || !user.id) {
+    console.log("Error finding the user ID or user does not exist");
+    return { id: "0", role: "" };
+  } else {
+    return { id: user.id, role: user.role || "" };
   }
 }
+
+
+

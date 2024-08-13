@@ -98,11 +98,11 @@ const getTechniciansController = async (
     const technicians = await Technician.filterTechnicians(filterOptions);
 
     // Filtrer les informations des techniciens
-    const userId =  await getIdUser(req);
+    const user =  await getIdUser(req);
 
     const filteredTechnicians = technicians.map((technician) => {
 
-      if ((userId).toString() !== technician._id.toString()) {
+      if (((user.id).toString() !== technician._id.toString()) && (user.role !== "Admin") ) {
         // Retourner seulement les informations non sensibles pour les autres 
         return {
           _id: technician._id,

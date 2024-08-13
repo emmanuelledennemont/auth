@@ -26,6 +26,7 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
+    "18": "^0.0.0",
     "@aws-sdk/client-s3": "^3.620.0",
     "@aws-sdk/s3-request-presigner": "^3.627.0",
     "@faker-js/faker": "^8.4.1",
